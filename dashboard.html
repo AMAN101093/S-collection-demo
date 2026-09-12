@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — S Collections</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="auth.css">
+<style>
+/* ── Address section ──────────────────────────────────────────────────── */
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+}
+
+.address-card {
+  background: rgba(201,168,76,.06);
+  border: 1px solid rgba(201,168,76,.22);
+  border-radius: 14px;
+  padding: 1.4rem 1.6rem;
+  position: relative;
+  transition: border-color .2s, box-shadow .2s;
+}
+.address-card:hover {
+  border-color: rgba(201,168,76,.5);
+  box-shadow: 0 6px 28px rgba(201,168,76,.1);
+}
+
+.address-card__label {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-family: 'Cinzel', serif;
+  font-size: .65rem; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #c9a84c;
+  background: rgba(201,168,76,.12);
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: 999px;
+  padding: .2rem .75rem;
+  margin-bottom: 1rem;
+}
+.address-card__label svg { width: 11px; height: 11px; }
+
+.address-card__name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 600;
+  color: #f0e6c8;
+  margin-bottom: .4rem;
+}
+
+.address-card__lines {
+  font-family: 'Jost', sans-serif;
+  font-size: .82rem; font-weight: 300;
+  color: rgba(240,230,200,.55);
+  line-height: 1.75;
+}
+
+.address-card__phone {
+  margin-top: .75rem;
+  display: flex; align-items: center; gap: .4rem;
+  font-family: 'Jost', sans-serif;
+  font-size: .78rem; color: rgba(201,168,76,.7);
+}
+.address-card__phone svg { width: 12px; height: 12px; }
+
+.address-card__actions {
+  display: flex; gap: .6rem;
+  margin-top: 1.1rem; padding-top: 1rem;
+  border-top: 1px solid rgba(201,168,76,.1);
+}
+.addr-btn {
+  font-family: 'Jost', sans-serif;
+  font-size: .72rem; font-weight: 500; letter-spacing: .08em;
+  text-transform: uppercase; cursor: pointer;
+  border-radius: 999px; padding: .3rem .9rem;
+  display: inline-flex; align-items: center; gap: .35rem;
+  transition: all .2s; text-decoration: none;
+}
+.addr-btn svg { width: 11px; height: 11px; }
+.addr-btn--edit {
+  background: rgba(201,168,76,.12);
+  border: 1px solid rgba(201,168,76,.3);
+  color: #c9a84c;
+}
+.addr-btn--edit:hover { background: rgba(201,168,76,.22); border-color: #c9a84c; }
+
+/* Empty address state */
+.address-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem 2rem;
+  border: 1.5px dashed rgba(201,168,76,.2);
+  border-radius: 14px;
+  text-align: center;
+}
+.address-empty__icon {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(201,168,76,.08);
+  border: 1px solid rgba(201,168,76,.2);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(201,168,76,.5);
+}
+.address-empty__icon svg { width: 24px; height: 24px; }
+.address-empty__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 600;
+  color: rgba(240,230,200,.6);
+}
+.address-empty__sub {
+  font-family: 'Jost', sans-serif;
+  font-size: .8rem; font-weight: 300;
+  color: rgba(201,168,76,.4);
+  max-width: 300px;
+}
+.address-empty__btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Jost', sans-serif;
+  font-size: .75rem; font-weight: 500; letter-spacing: .1em;
+  text-transform: uppercase;
+  background: rgba(201,168,76,.12);
+  border: 1px solid rgba(201,168,76,.3);
+  color: #c9a84c;
+  border-radius: 999px;
+  padding: .5rem 1.2rem;
+  text-decoration: none;
+  transition: background .2s, border-color .2s;
+  cursor: pointer;
+}
+.address-empty__btn:hover {
+  background: rgba(201,168,76,.22);
+  border-color: #c9a84c;
+  color: #c9a84c;
+}
+.address-empty__btn svg { width: 13px; height: 13px; }
+
+/* Address field rows inside card */
+.address-card__row {
+  display: flex; align-items: center; gap: .5rem;
+  font-family: 'Jost', sans-serif;
+  font-size: .82rem; font-weight: 300;
+  color: rgba(240,230,200,.55);
+  margin-bottom: .3rem;
+}
+.address-card__row svg { width: 12px; height: 12px; color: rgba(201,168,76,.5); flex-shrink: 0; }
+.address-card__row strong { color: rgba(240,230,200,.8); font-weight: 400; }
+</style>
+</head>
+<body class="dashboard-body">
+<a href="#main-content" class="skip-link">Skip to content</a>
+
+<nav class="dash-nav">
+  <a href="index.html" class="dash-brand" aria-label="S Collections home">
+    <svg width="28" height="28" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <polygon points="24,4 44,14 44,34 24,44 4,34 4,14" stroke="#c9a84c" stroke-width="1.5" fill="none"/>
+      <text x="24" y="28" text-anchor="middle" font-family="Cinzel,serif" font-size="12" font-weight="700" fill="#c9a84c">SC</text>
+    </svg>
+    <span>S <em>Collections</em></span>
+  </a>
+  <div class="dash-nav-right">
+    <a href="cart.html" style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;color:inherit;text-decoration:none;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+    <circle cx="9" cy="21" r="1.4"/>
+    <circle cx="18" cy="21" r="1.4"/>
+    <path d="M2.5 3h2.2l2.1 11.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L21 7H6"/>
+  </svg>
+      <span style="position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 3px;border-radius:999px;background:#d4a017;color:#1a0a2e;font-family:'DM Sans',sans-serif;font-size:.62rem;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1;">
+      3    </span>
+  </a>
+    <span class="dash-user-chip">
+        <span class="dash-avatar" aria-hidden="true">AS</span>
+        <span class="dash-user-name">Ananya</span>
+    </span>
+    <a href="index.html" class="btn-logout">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sign Out
+    </a>
+  </div>
+</nav>
+
+<main class="dash-main" id="main-content">
+  <div class="dash-container">
+
+    <!-- Hero -->
+    <div class="dash-hero">
+      <div class="dash-avatar-lg" aria-hidden="true">AS</div>
+      <div>
+        <h1 class="dash-welcome">Welcome back, Ananya!</h1>
+        <p class="dash-member">Member since March 2026</p>
+      </div>
+    </div>
+
+    <!-- Account Details -->
+    <section class="dash-section" aria-labelledby="account-heading">
+      <h2 class="dash-section-title" id="account-heading">Account Details</h2>
+      <div class="info-grid">
+
+        <div class="info-card">
+          <span class="info-label">Full Name</span>
+          <span class="info-value">Ananya Sharma</span>
+        </div>
+
+        <div class="info-card">
+          <span class="info-label">Email Address</span>
+          <span class="info-value">ananya.sharma@example.com</span>
+        </div>
+
+        <div class="info-card">
+          <span class="info-label">Phone Number</span>
+          <span class="info-value">+91 9876543210</span>
+        </div>
+
+        <div class="info-card">
+          <span class="info-label">Member Since</span>
+          <span class="info-value">March 2026</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="dash-section" aria-labelledby="quick-actions">
+      <h2 class="dash-section-title" id="quick-actions">Quick Actions</h2>
+      <div class="actions-grid">
+
+        <a href="order.html" class="action-card">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span>My Orders</span>
+        </a>
+
+        <a href="wish.html" class="action-card">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          <span>Wishlist</span>
+        </a>
+
+        <a href="edit.html" class="action-card">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Edit Profile</span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Saved Address -->
+    <section class="dash-section" aria-labelledby="address-heading">
+      <h2 class="dash-section-title" id="address-heading">Saved Address</h2>
+      <div class="address-grid">
+
+                  <!-- Real address from DB -->
+          <div class="address-card">
+            <div class="address-card__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+              Home
+            </div>
+
+            <div class="address-card__name">Ananya Sharma</div>
+
+                          <div class="address-card__row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                14 Rajpur Road              </div>
+            
+            <div class="address-card__lines">
+              Dehradun, Uttarakhand, — 248001 — 248001            </div>
+
+            <div class="address-card__phone">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.8a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              +91 9876543210            </div>
+
+            <div class="address-card__actions">
+              <a href="edit.html" class="addr-btn addr-btn--edit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Edit Address
+              </a>
+            </div>
+          </div>
+
+        
+      </div>
+    </section>
+
+  </div>
+</main>
+
+</body>
+</html>

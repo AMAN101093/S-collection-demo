@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collection — STRITHI COLLECTION</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --purple-deepest : #1a0a2e;
+  --purple-deep    : #2d1b54;
+  --purple-mid     : #4b2a8a;
+  --purple-light   : #7c52c8;
+  --purple-pale    : #c9b8f0;
+  --gold-bright    : #f5c842;
+  --gold-warm      : #d4a017;
+  --gold-muted     : #8a6a10;
+  --gold-pale      : #fdf3c8;
+  --white          : #ffffff;
+  --text-muted     : #6b5a8a;
+
+  --font-display : 'Cormorant Garamond', serif;
+  --font-body    : 'DM Sans', sans-serif;
+
+  --radius-sm   : 4px;
+  --radius-md   : 12px;
+  --radius-lg   : 24px;
+  --radius-full : 999px;
+
+  --shadow-gold : 0 0 40px rgba(212,160,23,.25), 0 0 80px rgba(212,160,23,.10);
+  --shadow-card : 0 8px 40px rgba(26,10,46,.35);
+}
+
+/* ═══════════════════════════════════════════
+   RESET / BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--purple-deepest);
+  color: var(--white);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }
+
+/* grain overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0; opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 150px 150px;
+}
+
+/* ═══════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════ */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(1.5rem, 5vw, 4rem);
+  height: 72px;
+  background: rgba(26,10,46,.72);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(212,160,23,.15);
+}
+.navbar__logo {
+  font-family: var(--font-display);
+  font-size: 1.6rem; font-weight: 700; letter-spacing: .04em;
+  color: var(--gold-bright);
+  display: flex; align-items: center; gap: .5rem;
+}
+.navbar__logo span {
+  display: inline-block; width: 10px; height: 10px;
+  border-radius: 50%; background: var(--gold-bright);
+  box-shadow: 0 0 10px var(--gold-warm);
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:.4; transform:scale(.7); }
+}
+.navbar__links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+.navbar__links a {
+  font-size: .875rem; font-weight: 400;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--purple-pale); transition: color .2s;
+}
+.navbar__links a:hover,
+.navbar__links a.active { color: var(--gold-bright); }
+.navbar__actions { display: flex; align-items: center; gap: 1rem; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-body); font-size: .875rem; font-weight: 500;
+  letter-spacing: .06em; text-transform: uppercase;
+  border: none; cursor: pointer;
+  border-radius: var(--radius-full); padding: .6rem 1.5rem;
+  transition: transform .15s, box-shadow .2s, background .2s;
+}
+.btn:hover  { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+.btn-ghost {
+  background: transparent; color: var(--purple-pale);
+  border: 1px solid rgba(201,184,240,.3);
+}
+.btn-ghost:hover { background: rgba(201,184,240,.08); border-color: var(--purple-pale); }
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold-warm));
+  color: var(--purple-deepest); font-weight: 600;
+  box-shadow: 0 4px 20px rgba(212,160,23,.3);
+}
+.btn-gold:hover { box-shadow: 0 6px 30px rgba(212,160,23,.5); }
+
+.user-chip {
+  display: flex; align-items: center; gap: .6rem;
+  background: rgba(212,160,23,.12); border: 1px solid rgba(212,160,23,.25);
+  border-radius: var(--radius-full); padding: .35rem .9rem .35rem .4rem;
+  font-size: .82rem; color: var(--gold-pale); cursor: default;
+}
+.user-chip__avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple-mid), var(--gold-warm));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: .95rem; font-weight: 700;
+  color: var(--white); flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE HEADER
+═══════════════════════════════════════════ */
+.page-header {
+  padding: 120px clamp(1.5rem, 5vw, 5rem) 3rem;
+  position: relative; overflow: hidden;
+}
+.page-header__orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px); pointer-events: none;
+}
+.page-header__orb--1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(75,42,138,.45) 0%, transparent 70%);
+  top: -120px; right: -80px;
+  animation: float 9s ease-in-out infinite;
+}
+.page-header__orb--2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(212,160,23,.18) 0%, transparent 70%);
+  top: 40px; left: 10%;
+  animation: float 11s ease-in-out infinite reverse;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-24px) scale(1.04); }
+}
+.page-header__inner {
+  position: relative; z-index: 2;
+  display: flex; flex-wrap: wrap;
+  align-items: flex-end; justify-content: space-between; gap: 1.5rem;
+}
+.page-header__label {
+  font-size: .75rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold-warm); margin-bottom: .6rem;
+}
+.page-header__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 300; line-height: 1.1;
+  color: var(--white);
+}
+.page-header__title em {
+  font-style: italic; font-weight: 400;
+  background: linear-gradient(120deg, var(--gold-bright), var(--gold-warm), var(--gold-bright));
+  background-size: 200%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.page-header__count {
+  font-size: .82rem; color: var(--purple-pale);
+  background: rgba(201,184,240,.08);
+  border: 1px solid rgba(201,184,240,.15);
+  border-radius: var(--radius-full);
+  padding: .45rem 1.1rem;
+  white-space: nowrap;
+}
+.page-header__count strong { color: var(--gold-bright); font-weight: 500; }
+
+/* ═══════════════════════════════════════════
+   FILTER / SEARCH BAR
+═══════════════════════════════════════════ */
+.filters {
+  padding: 0 clamp(1.5rem, 5vw, 5rem) 2.5rem;
+  position: relative; z-index: 2;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 1rem;
+}
+.filter-pills { display: flex; flex-wrap: wrap; gap: .5rem; }
+.pill {
+  font-size: .75rem; font-weight: 500;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: .4rem 1.1rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(201,184,240,.2);
+  color: rgba(201,184,240,.65);
+  background: rgba(45,27,84,.3);
+  cursor: pointer; transition: all .2s;
+  text-decoration: none; display: inline-block;
+}
+.pill:hover { border-color: rgba(212,160,23,.5); color: var(--gold-bright); background: rgba(212,160,23,.08); }
+.pill.active { border-color: var(--gold-warm); color: var(--gold-bright); background: rgba(212,160,23,.14); }
+
+.search-wrap { margin-left: auto; position: relative; }
+.search-wrap svg {
+  position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+  color: rgba(201,184,240,.45); pointer-events: none;
+  width: 16px; height: 16px;
+}
+.search-input {
+  background: rgba(45,27,84,.4);
+  border: 1px solid rgba(212,160,23,.2);
+  border-radius: var(--radius-full);
+  padding: .55rem 1.2rem .55rem 2.6rem;
+  font-family: var(--font-body); font-size: .875rem;
+  color: var(--white); outline: none; width: 260px;
+  transition: border-color .2s, background .2s;
+}
+.search-input::placeholder { color: rgba(201,184,240,.3); }
+.search-input:focus { border-color: rgba(212,160,23,.5); background: rgba(45,27,84,.6); }
+
+/* ═══════════════════════════════════════════
+   PRODUCTS GRID — 5 per row
+═══════════════════════════════════════════ */
+.products-section {
+  padding: 0 clamp(1rem, 3vw, 5rem) 6rem;
+  position: relative; z-index: 2;
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.4rem;
+}
+
+/* ── Single product card ── */
+.prod-card {
+  background: rgba(45,27,84,.45);
+  border: 1px solid rgba(212,160,23,.15);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  display: flex; flex-direction: column;
+  transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s, border-color .3s;
+  cursor: pointer;
+  opacity: 0;
+  animation: cardIn .5s ease forwards;
+}
+.prod-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 24px 60px rgba(212,160,23,.22), 0 8px 24px rgba(26,10,46,.55);
+  border-color: rgba(212,160,23,.55);
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* image */
+.prod-card__img-wrap {
+  width: 100%; aspect-ratio: 3/4;
+  background: linear-gradient(160deg, rgba(75,42,138,.6) 0%, rgba(26,10,46,.9) 100%);
+  position: relative; overflow: hidden;
+}
+.prod-card__img-wrap img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .5s ease;
+}
+.prod-card:hover .prod-card__img-wrap img { transform: scale(1.09); }
+
+/* discount badge */
+.prod-card__discount {
+  position: absolute; top: .75rem; left: .75rem;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold-warm));
+  color: var(--purple-deepest);
+  font-size: .65rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  border-radius: var(--radius-full);
+  padding: .22rem .7rem;
+  z-index: 2;
+}
+
+/* stock badge */
+.prod-card__stock {
+  position: absolute; top: .75rem; right: 2.8rem;  /* shifted left to make room for heart */
+  font-size: .62rem; font-weight: 500; letter-spacing: .07em;
+  text-transform: uppercase; border-radius: var(--radius-full);
+  padding: .22rem .7rem; z-index: 2;
+}
+.prod-card__stock--low  { background: rgba(220,60,40,.25); border: 1px solid rgba(220,60,40,.4); color: #ff9f8d; }
+.prod-card__stock--ok   { background: rgba(40,180,80,.15); border: 1px solid rgba(40,180,80,.3); color: #7fe0a0; }
+
+/* ── Floating wishlist heart on image ── */
+.prod-card__wish-img {
+  position: absolute;
+  top: .65rem; right: .65rem;
+  z-index: 4;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(26,10,46,.72);
+  border: 1px solid rgba(201,184,240,.2);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, transform .2s;
+  color: rgba(201,184,240,.5);
+}
+.prod-card__wish-img:hover {
+  background: rgba(220,60,80,.18);
+  border-color: rgba(220,60,80,.45);
+  color: #ff9fa8;
+  transform: scale(1.12);
+}
+.prod-card__wish-img.active {
+  background: rgba(220,60,80,.22);
+  border-color: rgba(220,60,80,.55);
+  color: #ff6680;
+}
+.prod-card__wish-img svg { width: 15px; height: 15px; transition: fill .2s; }
+.prod-card__wish-img.active svg { fill: currentColor; }
+
+/* quick-view overlay */
+.prod-card__overlay {
+  position: absolute; inset: 0;
+  background: rgba(26,10,46,.55);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .3s;
+  z-index: 3;
+}
+.prod-card:hover .prod-card__overlay { opacity: 1; }
+.prod-card__overlay-btn {
+  font-family: var(--font-body); font-size: .78rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold-warm));
+  color: var(--purple-deepest);
+  border: none; border-radius: var(--radius-full);
+  padding: .6rem 1.4rem; cursor: pointer;
+  transform: translateY(6px); transition: transform .3s;
+}
+.prod-card:hover .prod-card__overlay-btn { transform: translateY(0); }
+
+/* body */
+.prod-card__body {
+  padding: 1rem 1.1rem 1.3rem;
+  display: flex; flex-direction: column; gap: .45rem;
+  flex: 1;
+}
+.prod-card__category { font-size: .65rem; letter-spacing: .13em; text-transform: uppercase; color: var(--gold-muted); }
+.prod-card__name {
+  font-family: var(--font-display);
+  font-size: 1.05rem; font-weight: 600;
+  color: var(--gold-pale); letter-spacing: .01em;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.prod-card__desc {
+  font-size: .75rem; color: rgba(201,184,240,.6);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  flex: 1;
+}
+.prod-card__pricing {
+  display: flex; align-items: baseline; gap: .55rem;
+  margin-top: .3rem; flex-wrap: wrap;
+}
+.prod-card__price-now { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--gold-bright); }
+.prod-card__price-was { font-size: .78rem; color: rgba(201,184,240,.4); text-decoration: line-through; }
+.prod-card__save { font-size: .65rem; font-weight: 500; color: #7fe0a0; letter-spacing: .04em; }
+
+.prod-card__add {
+  font-family: var(--font-body); font-size: .72rem; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--gold-bright);
+  border: 1px solid rgba(212,160,23,.35);
+  border-radius: var(--radius-full);
+  padding: .35rem .9rem;
+  background: transparent; cursor: pointer;
+  transition: background .2s, border-color .2s, transform .15s;
+}
+.prod-card__add:hover {
+  background: rgba(212,160,23,.14); border-color: var(--gold-bright);
+  transform: translateY(-1px);
+}
+.prod-card__wish {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: transparent; border: 1px solid rgba(201,184,240,.15);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .2s, border-color .2s, transform .15s;
+  color: rgba(201,184,240,.4);
+}
+.prod-card__wish:hover { background: rgba(220,60,80,.15); border-color: rgba(220,60,80,.4); color: #ff9fa8; transform: scale(1.12); }
+.prod-card__wish.active { background: rgba(220,60,80,.2); border-color: rgba(220,60,80,.5); color: #ff6680; }
+.prod-card__wish.active svg { fill: currentColor; }
+
+.prod-card__actions { display: flex; flex-direction: column; gap: .5rem; margin-top: .5rem; }
+.prod-card__footer { display: flex; align-items: center; justify-content: space-between; }
+.prod-card__details {
+  display: flex; align-items: center; justify-content: center; gap: .4rem;
+  font-family: var(--font-body); font-size: .72rem; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--purple-pale);
+  background: rgba(201,184,240,.07);
+  border: 1px solid rgba(201,184,240,.18);
+  border-radius: var(--radius-full);
+  padding: .35rem .9rem;
+  text-decoration: none; width: 100%;
+  transition: background .2s, border-color .2s, color .2s, transform .15s;
+}
+.prod-card__details:hover { background: rgba(201,184,240,.14); border-color: rgba(201,184,240,.4); color: var(--white); transform: translateY(-1px); }
+.prod-card__details svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+/* ── Empty state ── */
+.empty-state { grid-column: 1/-1; text-align: center; padding: 6rem 2rem; }
+.empty-state__icon { font-size: 3rem; margin-bottom: 1rem; opacity: .3; }
+.empty-state__title { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; color: var(--purple-pale); margin-bottom: .5rem; }
+.empty-state__sub { font-size: .9rem; color: var(--text-muted); }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 1280px) { .products-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 1024px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px)  {
+  .navbar__links { display: none; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: .9rem; }
+  .search-input  { width: 100%; }
+  .search-wrap   { margin-left: 0; width: 100%; }
+}
+@media (max-width: 420px)  { .products-grid { grid-template-columns: 1fr; } }
+
+.page-end { height: 1px; }
+
+/* ═══════════════════════════════════════════
+   TOAST NOTIFICATION
+═══════════════════════════════════════════ */
+#toast-container {
+  position: fixed; bottom: 2rem; right: 2rem;
+  z-index: 9999; display: flex; flex-direction: column; gap: .75rem;
+  pointer-events: none;
+}
+.toast {
+  display: flex; align-items: center; gap: .85rem;
+  background: rgba(26,10,46,.92);
+  border: 1px solid rgba(212,160,23,.45);
+  border-radius: var(--radius-md);
+  padding: .85rem 1.25rem;
+  box-shadow: 0 8px 40px rgba(26,10,46,.6), 0 0 0 1px rgba(212,160,23,.1);
+  backdrop-filter: blur(18px);
+  min-width: 280px; max-width: 360px;
+  pointer-events: all;
+  transform: translateX(120%); opacity: 0;
+  transition: transform .38s cubic-bezier(.16,1,.3,1), opacity .3s;
+}
+.toast.toast--show { transform: translateX(0); opacity: 1; }
+.toast.toast--hide { transform: translateX(120%); opacity: 0; }
+.toast__icon {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold-warm));
+  box-shadow: 0 0 14px rgba(212,160,23,.4);
+}
+.toast__icon svg { width: 16px; height: 16px; color: var(--purple-deepest); }
+.toast__body { flex: 1; }
+.toast__title { font-size: .82rem; font-weight: 600; letter-spacing: .04em; color: var(--gold-pale); margin-bottom: .15rem; }
+.toast__msg { font-size: .75rem; color: rgba(201,184,240,.65); line-height: 1.4; }
+.toast__msg a { pointer-events: all; }
+.toast__close { background: none; border: none; cursor: pointer; color: rgba(201,184,240,.35); padding: .2rem; border-radius: 50%; transition: color .2s; line-height: 1; font-size: 1rem; flex-shrink: 0; }
+.toast__close:hover { color: var(--gold-bright); }
+.prod-card__add.loading { opacity: .6; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     NAVBAR
+══════════════════════════════ -->
+<nav class="navbar">
+  <a href="index.html" class="navbar__logo">STRITHI COLLECTION <span></span></a>
+
+  <ul class="navbar__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="product.html" class="active">Collection</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+  </ul>
+
+  <div class="navbar__actions">
+    <a href="cart.html" style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;color:inherit;text-decoration:none;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+    <circle cx="9" cy="21" r="1.4"/>
+    <circle cx="18" cy="21" r="1.4"/>
+    <path d="M2.5 3h2.2l2.1 11.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L21 7H6"/>
+  </svg>
+      <span style="position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 3px;border-radius:999px;background:#d4a017;color:#1a0a2e;font-family:'DM Sans',sans-serif;font-size:.62rem;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1;">
+      3    </span>
+  </a>
+          <div class="user-chip">
+        <div class="user-chip__avatar">A</div>
+        Ananya      </div>
+      <a href="dashboard.html" class="btn btn-gold">Dashboard</a>
+      </div>
+</nav>
+
+
+<!-- ══════════════════════════════
+     PAGE HEADER
+══════════════════════════════ -->
+<header class="page-header">
+  <div class="page-header__orb page-header__orb--1"></div>
+  <div class="page-header__orb page-header__orb--2"></div>
+
+  <div class="page-header__inner">
+    <div>
+      <p class="page-header__label">Exclusive Collection</p>
+      <h1 class="page-header__title">
+        The <em>STRITHI COLLECTION</em> Edit
+      </h1>
+    </div>
+    <div class="page-header__count">
+      Showing <strong>6</strong> products                </div>
+  </div>
+</header>
+
+
+<!-- ══════════════════════════════
+     FILTER + SEARCH
+══════════════════════════════ -->
+<div class="filters">
+  <div class="filter-pills">
+    <a href="product.html"
+       class="pill active">All</a>
+
+          <a href="product.html?category=Saree"
+         class="pill ">
+        Saree      </a>
+          <a href="product.html?category=Suit"
+         class="pill ">
+        Suit      </a>
+      </div>
+
+  <form class="search-wrap" method="GET" action="product.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" name="q" class="search-input"
+           placeholder="Search products…"
+           value="">
+  </form>
+</div>
+
+
+<!-- ══════════════════════════════
+     PRODUCTS GRID
+══════════════════════════════ -->
+<section class="products-section" aria-label="Product listing">
+  <div class="products-grid">
+
+                  <article class="prod-card"
+                 style="animation-delay: 0ms"
+                 data-id="1"
+                 aria-label="Midnight Sovereign Suit">
+
+          <!-- Image -->
+          <div class="prod-card__img-wrap">
+            <img src="https://picsum.photos/seed/scoll1/600/800"
+                 alt="Midnight Sovereign Suit"
+                 loading="lazy"
+                 onerror="this.src='https://picsum.photos/seed/fallback/560/750'">
+
+                          <span class="prod-card__discount">17% off</span>
+            
+                          <span class="prod-card__stock prod-card__stock--ok">In stock</span>
+            
+            <!-- Floating wishlist heart -->
+            <button class="prod-card__wish-img "
+                    aria-label="Add to wishlist"
+                    data-product-id="1"
+                    data-product-name="Midnight Sovereign Suit"
+                    onclick="toggleWish(this)">
+              <svg viewBox="0 0 24 24"
+                   fill="none"
+                   stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+
+            <!-- Quick-view overlay -->
+            <div class="prod-card__overlay">
+              <button class="prod-card__overlay-btn"
+                      onclick="quickView(1)">Quick View</button>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="prod-card__body">
+                          <span class="prod-card__category">Suit</span>
+            
+            <h2 class="prod-card__name">Midnight Sovereign Suit</h2>
+            <p class="prod-card__desc">Deep navy wool-blend with a structured silhouette and gold-tipped lapels. Crafted for authority and refined presence at every formal occasion.</p>
+
+            <div class="prod-card__pricing">
+              <span class="prod-card__price-now">
+                &#8377;18,999              </span>
+                              <span class="prod-card__price-was">
+                  &#8377;22,999                </span>
+                <span class="prod-card__save">
+                  Save &#8377;4,000                </span>
+                          </div>
+
+            <div class="prod-card__actions">
+              <div class="prod-card__footer">
+                <button type="button"
+                        class="prod-card__add"
+                        data-product-id="1"
+                        data-product-name="Midnight Sovereign Suit"
+                        onclick="addToCart(this)"
+                        >
+                  Add to Cart                </button>
+                <!-- Bottom wish button — synced with floating heart -->
+                <button class="prod-card__wish "
+                        aria-label="Add to wishlist"
+                        data-product-id="1"
+                        data-product-name="Midnight Sovereign Suit"
+                        onclick="toggleWish(this)">
+                  <svg width="15" height="15" viewBox="0 0 24 24"
+                       fill="none"
+                       stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+              </div>
+              <a href="detail.html?id=1" class="prod-card__details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                View Details
+              </a>
+            </div>
+          </div>
+
+        </article>
+              <article class="prod-card"
+                 style="animation-delay: 60ms"
+                 data-id="2"
+                 aria-label="Charcoal Regent Suit">
+
+          <!-- Image -->
+          <div class="prod-card__img-wrap">
+            <img src="https://picsum.photos/seed/scoll2/600/800"
+                 alt="Charcoal Regent Suit"
+                 loading="lazy"
+                 onerror="this.src='https://picsum.photos/seed/fallback/560/750'">
+
+                          <span class="prod-card__discount">16% off</span>
+            
+                          <span class="prod-card__stock prod-card__stock--ok">In stock</span>
+            
+            <!-- Floating wishlist heart -->
+            <button class="prod-card__wish-img active"
+                    aria-label="Remove from wishlist"
+                    data-product-id="2"
+                    data-product-name="Charcoal Regent Suit"
+                    onclick="toggleWish(this)">
+              <svg viewBox="0 0 24 24"
+                   fill="currentColor"
+                   stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+
+            <!-- Quick-view overlay -->
+            <div class="prod-card__overlay">
+              <button class="prod-card__overlay-btn"
+                      onclick="quickView(2)">Quick View</button>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="prod-card__body">
+                          <span class="prod-card__category">Suit</span>
+            
+            <h2 class="prod-card__name">Charcoal Regent Suit</h2>
+            <p class="prod-card__desc">Classic charcoal slim cut refined for boardroom and gala alike. Premium wool blend with a breathable lining for all-day comfort.</p>
+
+            <div class="prod-card__pricing">
+              <span class="prod-card__price-now">
+                &#8377;15,499              </span>
+                              <span class="prod-card__price-was">
+                  &#8377;18,499                </span>
+                <span class="prod-card__save">
+                  Save &#8377;3,000                </span>
+                          </div>
+
+            <div class="prod-card__actions">
+              <div class="prod-card__footer">
+                <button type="button"
+                        class="prod-card__add"
+                        data-product-id="2"
+                        data-product-name="Charcoal Regent Suit"
+                        onclick="addToCart(this)"
+                        >
+                  Add to Cart                </button>
+                <!-- Bottom wish button — synced with floating heart -->
+                <button class="prod-card__wish active"
+                        aria-label="Remove from wishlist"
+                        data-product-id="2"
+                        data-product-name="Charcoal Regent Suit"
+                        onclick="toggleWish(this)">
+                  <svg width="15" height="15" viewBox="0 0 24 24"
+                       fill="currentColor"
+                       stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+              </div>
+              <a href="detail.html?id=2" class="prod-card__details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                View Details
+              </a>
+            </div>
+          </div>
+
+        </article>
+              <article class="prod-card"
+                 style="animation-delay: 120ms"
+                 data-id="3"
+                 aria-label="Royal Velvet Suit">
+
+          <!-- Image -->
+          <div class="prod-card__img-wrap">
+            <img src="https://picsum.photos/seed/scoll3/600/800"
+                 alt="Royal Velvet Suit"
+                 loading="lazy"
+                 onerror="this.src='https://picsum.photos/seed/fallback/560/750'">
+
+                          <span class="prod-card__discount">17% off</span>
+            
+                          <span class="prod-card__stock prod-card__stock--ok">In stock</span>
+            
+            <!-- Floating wishlist heart -->
+            <button class="prod-card__wish-img "
+                    aria-label="Add to wishlist"
+                    data-product-id="3"
+                    data-product-name="Royal Velvet Suit"
+                    onclick="toggleWish(this)">
+              <svg viewBox="0 0 24 24"
+                   fill="none"
+                   stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+
+            <!-- Quick-view overlay -->
+            <div class="prod-card__overlay">
+              <button class="prod-card__overlay-btn"
+                      onclick="quickView(3)">Quick View</button>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="prod-card__body">
+                          <span class="prod-card__category">Suit</span>
+            
+            <h2 class="prod-card__name">Royal Velvet Suit</h2>
+            <p class="prod-card__desc">Luxuriant velvet in deep aubergine — made for evenings that deserve a statement. Hand-stitched lapels with contrast gold thread detailing.</p>
+
+            <div class="prod-card__pricing">
+              <span class="prod-card__price-now">
+                &#8377;24,999              </span>
+                              <span class="prod-card__price-was">
+                  &#8377;29,999                </span>
+                <span class="prod-card__save">
+                  Save &#8377;5,000                </span>
+                          </div>
+
+            <div class="prod-card__actions">
+              <div class="prod-card__footer">
+                <button type="button"
+                        class="prod-card__add"
+                        data-product-id="3"
+                        data-product-name="Royal Velvet Suit"
+                        onclick="addToCart(this)"
+                        >
+                  Add to Cart                </button>
+                <!-- Bottom wish button — synced with floating heart -->
+                <button class="prod-card__wish "
+                        aria-label="Add to wishlist"
+                        data-product-id="3"
+                        data-product-name="Royal Velvet Suit"
+                        onclick="toggleWish(this)">
+                  <svg width="15" height="15" viewBox="0 0 24 24"
+                       fill="none"
+                       stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+              </div>
+              <a href="detail.html?id=3" class="prod-card__details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                View Details
+              </a>
+            </div>
+          </div>
+
+        </article>
+              <article class="prod-card"
+                 style="animation-delay: 180ms"
+                 data-id="4"
+                 aria-label="Ivory Grandeur Suit">
+
+          <!-- Image -->
+          <div class="prod-card__img-wrap">
+            <img src="https://picsum.photos/seed/scoll4/600/800"
+                 alt="Ivory Grandeur Suit"
+                 loading="lazy"
+                 onerror="this.src='https://picsum.photos/seed/fallback/560/750'">
+
+                          <span class="prod-card__discount">17% off</span>
+            
+                          <span class="prod-card__stock prod-card__stock--ok">In stock</span>
+            
+            <!-- Floating wishlist heart -->
+            <button class="prod-card__wish-img "
+                    aria-label="Add to wishlist"
+                    data-product-id="4"
+                    data-product-name="Ivory Grandeur Suit"
+                    onclick="toggleWish(this)">
+              <svg viewBox="0 0 24 24"
+                   fill="none"
+                   stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+
+            <!-- Quick-view overlay -->
+            <div class="prod-card__overlay">
+              <button class="prod-card__overlay-btn"
+                      onclick="quickView(4)">Quick View</button>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="prod-card__body">
+                          <span class="prod-card__category">Suit</span>
+            
+            <h2 class="prod-card__name">Ivory Grandeur Suit</h2>
+            <p class="prod-card__desc">Crisp ivory linen with a relaxed drape — effortless elegance in warm weather. Breathable and lightweight for summer celebrations.</p>
+
+            <div class="prod-card__pricing">
+              <span class="prod-card__price-now">
+                &#8377;13,299              </span>
+                              <span class="prod-card__price-was">
+                  &#8377;15,999                </span>
+                <span class="prod-card__save">
+                  Save &#8377;2,700                </span>
+                          </div>
+
+            <div class="prod-card__actions">
+              <div class="prod-card__footer">
+                <button type="button"
+                        class="prod-card__add"
+                        data-product-id="4"
+                        data-product-name="Ivory Grandeur Suit"
+                        onclick="addToCart(this)"
+                        >
+                  Add to Cart                </button>
+                <!-- Bottom wish button — synced with floating heart -->
+                <button class="prod-card__wish "
+                        aria-label="Add to wishlist"
+                        data-product-id="4"
+                        data-product-name="Ivory Grandeur Suit"
+                        onclick="toggleWish(this)">
+                  <svg width="15" height="15" viewBox="0 0 24 24"
+                       fill="none"
+                       stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+              </div>
+              <a href="detail.html?id=4" class="prod-card__details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                View Details
+              </a>
+            </div>
+          </div>
+
+        </article>
+              <article class="prod-card"
+                 style="animation-delay: 240ms"
+                 data-id="5"
+                 aria-label="Obsidian Elite Suit">
+
+          <!-- Image -->
+          <div class="prod-card__img-wrap">
+            <img src="https://picsum.photos/seed/scoll5/600/800"
+                 alt="Obsidian Elite Suit"
+                 loading="lazy"
+                 onerror="this.src='https://picsum.photos/seed/fallback/560/750'">
+
+                          <span class="prod-card__discount">20% off</span>
+            
+                          <span class="prod-card__stock prod-card__stock--low">Only 5 left</span>
+            
+            <!-- Floating wishlist heart -->
+            <button class="prod-card__wish-img active"
+                    aria-label="Remove from wishlist"
+                    data-product-id="5"
+                    data-product-name="Obsidian Elite Suit"
+                    onclick="toggleWish(this)">
+              <svg viewBox="0 0 24 24"
+                   fill="currentColor"
+                   stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+
+            <!-- Quick-view overlay -->
+            <div class="prod-card__overlay">
+              <button class="prod-card__overlay-btn"
+                      onclick="quickView(5)">Quick View</button>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="prod-card__body">
+                          <span class="prod-card__category">Suit</span>
+            
+            <h2 class="prod-card__name">Obsidian Elite Suit</h2>
+            <p class="prod-card__desc">Jet black premium wool with sharp tailoring and contrast stitching for maximum presence. A limited-run piece for the discerning collector.</p>
+
+            <div class="prod-card__pricing">
+              <span class="prod-card__price-now">
+                &#8377;21,499              </span>
+                              <span class="prod-card__price-was">
+                  &#8377;26,999                </span>
+                <span class="prod-card__save">
+                  Save &#8377;5,500                </span>
+                          </div>
+
+            <div class="prod-card__actions">
+              <div class="prod-card__footer">
+                <button type="button"
+                        class="prod-card__add"
+                        data-product-id="5"
+                        data-product-name="Obsidian Elite Suit"
+                        onclick="addToCart(this)"
+                        >
+                  Add to Cart                </button>
+                <!-- Bottom wish button — synced with floating heart -->
+                <button class="prod-card__wish active"
+                        aria-label="Remove from wishlist"
+                        data-product-id="5"
+                        data-product-name="Obsidian Elite Suit"
+                        onclick="toggleWish(this)">
+                  <svg width="15" height="15" viewBox="0 0 24 24"
+                       fill="currentColor"
+                       stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+              </div>
+              <a href="detail.html?id=5" class="prod-card__details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                View Details
+              </a>
+            </div>
+          </div>
+
+        </article>
+              <article class="prod-card"
+                 style="animation-delay: 300ms"
+                 data-id="6"
+                 aria-label="Banarasi Silk Saree">
+
+          <!-- Image -->
+          <div class="prod-card__img-wrap">
+            <img src="https://picsum.photos/seed/scoll6/600/800"
+                 alt="Banarasi Silk Saree"
+                 loading="lazy"
+                 onerror="this.src='https://picsum.photos/seed/fallback/560/750'">
+
+                          <span class="prod-card__discount">21% off</span>
+            
+                          <span class="prod-card__stock prod-card__stock--ok">In stock</span>
+            
+            <!-- Floating wishlist heart -->
+            <button class="prod-card__wish-img "
+                    aria-label="Add to wishlist"
+                    data-product-id="6"
+                    data-product-name="Banarasi Silk Saree"
+                    onclick="toggleWish(this)">
+              <svg viewBox="0 0 24 24"
+                   fill="none"
+                   stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+
+            <!-- Quick-view overlay -->
+            <div class="prod-card__overlay">
+              <button class="prod-card__overlay-btn"
+                      onclick="quickView(6)">Quick View</button>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="prod-card__body">
+                          <span class="prod-card__category">Saree</span>
+            
+            <h2 class="prod-card__name">Banarasi Silk Saree</h2>
+            <p class="prod-card__desc">Hand-woven Banarasi silk saree with intricate zari work and a rich gold border. A timeless piece passed through generations of craftsmanship.</p>
+
+            <div class="prod-card__pricing">
+              <span class="prod-card__price-now">
+                &#8377;14,999              </span>
+                              <span class="prod-card__price-was">
+                  &#8377;18,999                </span>
+                <span class="prod-card__save">
+                  Save &#8377;4,000                </span>
+                          </div>
+
+            <div class="prod-card__actions">
+              <div class="prod-card__footer">
+                <button type="button"
+                        class="prod-card__add"
+                        data-product-id="6"
+                        data-product-name="Banarasi Silk Saree"
+                        onclick="addToCart(this)"
+                        >
+                  Add to Cart                </button>
+                <!-- Bottom wish button — synced with floating heart -->
+                <button class="prod-card__wish "
+                        aria-label="Add to wishlist"
+                        data-product-id="6"
+                        data-product-name="Banarasi Silk Saree"
+                        onclick="toggleWish(this)">
+                  <svg width="15" height="15" viewBox="0 0 24 24"
+                       fill="none"
+                       stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+              </div>
+              <a href="detail.html?id=6" class="prod-card__details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                View Details
+              </a>
+            </div>
+          </div>
+
+        </article>
+          
+  </div><!-- /products-grid -->
+</section>
+
+<div class="page-end"></div>
+
+
+<footer class="site-footer">
+
+  <!-- Decorative top border with ornament -->
+  <div class="footer__top-ornament">
+    <div class="footer__orn-line"></div>
+    <div class="footer__orn-diamond"></div>
+    <div class="footer__orn-line"></div>
+  </div>
+
+  <div class="footer__inner">
+
+    <!-- ── COLUMN 1 : About & Contact ── -->
+    <div class="footer__col">
+
+      <!-- Brand -->
+      <div class="footer__brand">
+        <span class="footer__logo">STRITHI COLLECTION</span>
+        <span class="footer__logo-dot"></span>
+      </div>
+      <p class="footer__tagline">
+        Dressed for those who demand more &mdash; elegance, refinement, and
+        timeless style delivered to your door.
+      </p>
+
+      <!-- About Us -->
+      <h3 class="footer__col-title">About Us</h3>
+      <p class="footer__body-text">
+        STRITHI COLLECTION is a premium fashion platform curating the finest suits and
+        sarees for discerning individuals. Every piece is chosen for its
+        craftsmanship, fabric quality, and enduring elegance.
+      </p>
+
+      <!-- Contact Us -->
+      <h3 class="footer__col-title" style="margin-top:1.8rem;">Contact Us</h3>
+      <ul class="footer__contact-list">
+        <li>
+          <svg class="footer__contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:support@STRITHI COLLECTION.in">support@STRITHI COLLECTION.in</a>
+        </li>
+        <li>
+          <svg class="footer__contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.74a16 16 0 0 0 6.29 6.29l1.62-1.62a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <a href="tel:+911800001234">+91 1800 001 234</a>
+        </li>
+        <li>
+          <svg class="footer__contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>14 Silk Route, Connaught Place,<br>New Delhi &mdash; 110001</span>
+        </li>
+      </ul>
+
+      <!-- Social icons -->
+      <div class="footer__socials">
+        <a href="#" class="footer__social-btn" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="#" class="footer__social-btn" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" class="footer__social-btn" aria-label="Pinterest">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.76 1.22-5.16 1.22-5.16s-.31-.62-.31-1.54c0-1.45.84-2.53 1.88-2.53.89 0 1.32.67 1.32 1.47 0 .9-.57 2.24-.87 3.48-.25 1.04.52 1.88 1.54 1.88 1.84 0 3.08-2.36 3.08-5.15 0-2.13-1.44-3.62-3.5-3.62-2.38 0-3.78 1.79-3.78 3.64 0 .72.28 1.49.62 1.91.07.08.08.15.06.24-.06.26-.2.83-.23.95-.04.15-.13.18-.3.11-1.12-.52-1.82-2.17-1.82-3.49 0-2.84 2.06-5.44 5.94-5.44 3.12 0 5.55 2.22 5.55 5.19 0 3.1-1.95 5.59-4.66 5.59-.91 0-1.77-.47-2.06-1.03l-.56 2.1c-.2.79-.75 1.77-1.12 2.37.85.26 1.74.4 2.67.4 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+        </a>
+        <a href="#" class="footer__social-btn" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75,15.02 15.5,12 9.75,8.98 9.75,15.02" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+    </div>
+
+
+    <!-- ── COLUMN 2 : Products ── -->
+    <div class="footer__col footer__col--products">
+      <h3 class="footer__col-title">Our Collections</h3>
+
+      <!-- SUIT category -->
+      <div class="footer__product-group">
+        <div class="footer__product-group-header">
+          <span class="footer__product-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 7l-8-4-8 4m16 0v10l-8 4m-8-4V7m8 4l8-4M12 11L4 7"/></svg>
+          </span>
+          <span class="footer__product-group-name">Suit</span>
+        </div>
+        <ul class="footer__product-links">
+          <li><a href="#">Midnight Sovereign</a></li>
+          <li><a href="#">Charcoal Regent</a></li>
+          <li><a href="#">Royal Velvet</a></li>
+          <li><a href="#">Ivory Grandeur</a></li>
+          <li><a href="#">Obsidian Elite</a></li>
+          <li><a href="#suits" class="footer__view-all">View all suits &rarr;</a></li>
+        </ul>
+      </div>
+
+      <!-- Divider -->
+      <div class="footer__product-divider"></div>
+
+      <!-- SAREE category -->
+      <div class="footer__product-group">
+        <div class="footer__product-group-header">
+          <span class="footer__product-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          </span>
+          <span class="footer__product-group-name">Saree</span>
+        </div>
+        <ul class="footer__product-links">
+          <li><a href="#">Banarasi Silk</a></li>
+          <li><a href="#">Kanjivaram Gold</a></li>
+          <li><a href="#">Chanderi Elegance</a></li>
+          <li><a href="#">Mysore Silk Royal</a></li>
+          <li><a href="#">Organza Luxe</a></li>
+          <li><a href="#sarees" class="footer__view-all">View all sarees &rarr;</a></li>
+        </ul>
+      </div>
+
+      <!-- Quick links -->
+      <div class="footer__product-divider"></div>
+      <ul class="footer__quick-links">
+        <li><a href="#">New Arrivals</a></li>
+        <li><a href="#">Best Sellers</a></li>
+        <li><a href="#">Sale</a></li>
+        <li><a href="#">Gift Cards</a></li>
+      </ul>
+    </div>
+
+
+    <!-- ── COLUMN 3 : Newsletter ── -->
+    <div class="footer__col footer__col--newsletter">
+      <h3 class="footer__col-title">Stay in the Know</h3>
+      <p class="footer__body-text">
+        Subscribe to our newsletter for exclusive drops, style guides,
+        and member-only offers delivered straight to your inbox.
+      </p>
+
+      <form class="footer__newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+        <div class="footer__nl-field">
+          <label for="nl-name" class="footer__nl-label">Full Name</label>
+          <input type="text" id="nl-name" name="nl_name"
+                 class="footer__nl-input" placeholder="Arjun Mehta" autocomplete="name" />
+        </div>
+        <div class="footer__nl-field">
+          <label for="nl-email" class="footer__nl-label">Email Address</label>
+          <input type="email" id="nl-email" name="nl_email"
+                 class="footer__nl-input" placeholder="you@example.com" autocomplete="email" required />
+        </div>
+
+        <div class="footer__nl-pref-label">I'm interested in</div>
+        <div class="footer__nl-chips">
+          <label class="footer__nl-chip">
+            <input type="checkbox" name="pref_suit" value="suit" />
+            <span>Suits</span>
+          </label>
+          <label class="footer__nl-chip">
+            <input type="checkbox" name="pref_saree" value="saree" />
+            <span>Sarees</span>
+          </label>
+          <label class="footer__nl-chip">
+            <input type="checkbox" name="pref_offers" value="offers" />
+            <span>Offers</span>
+          </label>
+          <label class="footer__nl-chip">
+            <input type="checkbox" name="pref_new" value="new" />
+            <span>New Arrivals</span>
+          </label>
+        </div>
+
+        <button type="submit" class="footer__nl-btn">
+          <span class="footer__nl-btn-text">Subscribe</span>
+          <svg class="footer__nl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+
+        <div class="footer__nl-success" id="nlSuccess" aria-live="polite">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          You're on the list! Expect something elegant soon.
+        </div>
+      </form>
+
+      <p class="footer__nl-privacy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:13px;height:13px;flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        We respect your privacy. Unsubscribe anytime.
+      </p>
+    </div>
+
+  </div><!-- /footer__inner -->
+
+
+  <!-- Bottom bar -->
+  <div class="footer__bottom">
+    <p class="footer__copy">&copy; 2026 STRITHI COLLECTION. All rights reserved.</p>
+    <div class="footer__bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Shipping &amp; Returns</a>
+    </div>
+  </div>
+
+</footer>
+
+
+<style>
+/* ═══════════════════════════════════════════════════
+   STRITHI COLLECTION FOOTER  —  footer.php styles
+   Include once per page (or move to your main CSS)
+═══════════════════════════════════════════════════ */
+
+.site-footer {
+  background: linear-gradient(180deg, rgba(26,10,46,0) 0%, #140826 6%, #0e0519 100%);
+  border-top: 1px solid rgba(212,160,23,.15);
+  padding-top: 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Ornament ── */
+.footer__top-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem 0 0;
+}
+.footer__orn-line {
+  width: 120px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,160,23,.35));
+}
+.footer__orn-line:last-child { transform: scaleX(-1); }
+.footer__orn-diamond {
+  width: 9px; height: 9px;
+  background: var(--gold-warm, #d4a017);
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px rgba(212,160,23,.5);
+}
+
+/* ── 3-column grid ── */
+.footer__inner {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1.1fr;
+  gap: 3.5rem;
+  padding: 3.5rem clamp(1.5rem, 7vw, 6rem) 3rem;
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+/* ── Shared col styles ── */
+.footer__col-title {
+  font-family: var(--font-display, 'Cormorant Garamond', serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--gold-bright, #f5c842);
+  margin-bottom: 1rem;
+  position: relative;
+  padding-bottom: .6rem;
+}
+.footer__col-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 32px; height: 1.5px;
+  background: var(--gold-warm, #d4a017);
+  border-radius: 2px;
+}
+
+.footer__body-text {
+  font-size: .85rem;
+  line-height: 1.75;
+  color: rgba(201,184,240,.7);
+  font-weight: 300;
+  margin-bottom: 1.2rem;
+}
+
+/* ── Col 1 : Brand / Contact ── */
+.footer__brand {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+.footer__logo {
+  font-family: var(--font-display, 'Cormorant Garamond', serif);
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--gold-bright, #f5c842);
+}
+.footer__logo-dot {
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--gold-bright, #f5c842);
+  box-shadow: 0 0 10px rgba(212,160,23,.6);
+}
+.footer__tagline {
+  font-size: .78rem;
+  letter-spacing: .06em;
+  color: rgba(201,184,240,.45);
+  line-height: 1.6;
+  margin-bottom: 1.8rem;
+  font-style: italic;
+}
+
+.footer__contact-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+}
+.footer__contact-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: .65rem;
+  font-size: .83rem;
+  color: rgba(201,184,240,.75);
+  line-height: 1.55;
+}
+.footer__contact-icon {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  margin-top: .12rem;
+  color: var(--gold-warm, #d4a017);
+}
+.footer__contact-list a {
+  color: rgba(201,184,240,.75);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer__contact-list a:hover { color: var(--gold-bright, #f5c842); }
+
+.footer__socials {
+  display: flex;
+  gap: .65rem;
+  margin-top: 1.8rem;
+}
+.footer__social-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(212,160,23,.25);
+  background: rgba(45,27,84,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(201,184,240,.65);
+  transition: background .2s, border-color .2s, color .2s, transform .2s;
+}
+.footer__social-btn svg { width: 15px; height: 15px; }
+.footer__social-btn:hover {
+  background: rgba(212,160,23,.15);
+  border-color: var(--gold-warm, #d4a017);
+  color: var(--gold-bright, #f5c842);
+  transform: translateY(-2px);
+}
+
+/* ── Col 2 : Products ── */
+.footer__product-group { margin-bottom: .5rem; }
+
+.footer__product-group-header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: .9rem;
+}
+.footer__product-group-icon {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  background: rgba(212,160,23,.12);
+  border: 1px solid rgba(212,160,23,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-warm, #d4a017);
+  flex-shrink: 0;
+}
+.footer__product-group-icon svg { width: 15px; height: 15px; }
+
+.footer__product-group-name {
+  font-family: var(--font-display, 'Cormorant Garamond', serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--gold-pale, #fdf3c8);
+}
+
+.footer__product-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  padding-left: .4rem;
+}
+.footer__product-links li a {
+  font-size: .83rem;
+  color: rgba(201,184,240,.65);
+  text-decoration: none;
+  letter-spacing: .02em;
+  transition: color .2s, padding-left .2s;
+  display: inline-block;
+}
+.footer__product-links li a:hover {
+  color: var(--gold-bright, #f5c842);
+  padding-left: .4rem;
+}
+.footer__view-all {
+  font-size: .75rem !important;
+  letter-spacing: .08em !important;
+  color: var(--gold-warm, #d4a017) !important;
+  text-transform: uppercase;
+  margin-top: .2rem;
+}
+.footer__view-all:hover { color: var(--gold-bright, #f5c842) !important; }
+
+.footer__product-divider {
+  height: 1px;
+  background: rgba(212,160,23,.1);
+  margin: 1.2rem 0;
+}
+
+.footer__quick-links {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem .8rem;
+}
+.footer__quick-links a {
+  font-size: .75rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: rgba(201,184,240,.45);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer__quick-links a:hover { color: var(--gold-bright, #f5c842); }
+
+/* ── Col 3 : Newsletter ── */
+.footer__newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer__nl-field {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+.footer__nl-label {
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(212,160,23,.7);
+}
+.footer__nl-input {
+  background: rgba(45,27,84,.4);
+  border: 1px solid rgba(212,160,23,.2);
+  border-radius: 8px;
+  padding: .65rem 1rem;
+  font-size: .875rem;
+  color: #fff;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  transition: border-color .2s, background .2s;
+  outline: none;
+}
+.footer__nl-input::placeholder { color: rgba(201,184,240,.3); }
+.footer__nl-input:focus {
+  border-color: rgba(212,160,23,.55);
+  background: rgba(45,27,84,.6);
+}
+
+.footer__nl-pref-label {
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(212,160,23,.7);
+  margin-bottom: -.4rem;
+}
+.footer__nl-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+.footer__nl-chip {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.footer__nl-chip input[type="checkbox"] {
+  display: none;
+}
+.footer__nl-chip span {
+  display: inline-block;
+  font-size: .75rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(201,184,240,.6);
+  border: 1px solid rgba(201,184,240,.2);
+  border-radius: 999px;
+  padding: .3rem .85rem;
+  transition: all .2s;
+  user-select: none;
+}
+.footer__nl-chip input:checked + span {
+  background: rgba(212,160,23,.18);
+  border-color: rgba(212,160,23,.55);
+  color: var(--gold-bright, #f5c842);
+}
+.footer__nl-chip:hover span {
+  border-color: rgba(212,160,23,.4);
+  color: rgba(201,184,240,.9);
+}
+
+.footer__nl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  background: linear-gradient(135deg, #f5c842, #d4a017);
+  color: #1a0a2e;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  font-size: .875rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 999px;
+  padding: .8rem 1.8rem;
+  cursor: pointer;
+  transition: box-shadow .25s, transform .15s;
+  width: 100%;
+}
+.footer__nl-btn:hover {
+  box-shadow: 0 6px 28px rgba(212,160,23,.45);
+  transform: translateY(-2px);
+}
+.footer__nl-btn:active { transform: translateY(0); }
+.footer__nl-btn-icon { width: 17px; height: 17px; }
+
+.footer__nl-success {
+  display: none;
+  align-items: center;
+  gap: .6rem;
+  background: rgba(67,122,34,.2);
+  border: 1px solid rgba(67,122,34,.4);
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  font-size: .83rem;
+  color: #a8d88a;
+}
+.footer__nl-success svg { width: 16px; height: 16px; flex-shrink: 0; stroke: #a8d88a; }
+.footer__nl-success.visible { display: flex; }
+
+.footer__nl-privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: .4rem;
+  font-size: .72rem;
+  color: rgba(201,184,240,.35);
+  line-height: 1.5;
+}
+
+/* ── Bottom bar ── */
+.footer__bottom {
+  border-top: 1px solid rgba(212,160,23,.1);
+  padding: 1.4rem clamp(1.5rem, 7vw, 6rem);
+  max-width: 1280px;
+  margin-inline: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.footer__copy {
+  font-size: .78rem;
+  color: rgba(107,90,138,.55);
+}
+.footer__bottom-links {
+  display: flex;
+  gap: 1.8rem;
+}
+.footer__bottom-links a {
+  font-size: .75rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(107,90,138,.55);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer__bottom-links a:hover { color: var(--gold-bright, #f5c842); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .footer__inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+  .footer__col--newsletter {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer__inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2.5rem 1.5rem 2rem;
+  }
+  .footer__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .8rem;
+  }
+  .footer__bottom-links { flex-wrap: wrap; gap: 1rem; }
+}
+</style>
+
+
+<script>
+function handleNewsletterSubmit(e) {
+  e.preventDefault();
+  const form   = e.target;
+  const email  = form.nl_email.value.trim();
+  const btn    = form.querySelector('.footer__nl-btn');
+  const success = document.getElementById('nlSuccess');
+
+  if (!email) return;
+
+  // Visual loading state
+  btn.disabled = true;
+  btn.querySelector('.footer__nl-btn-text').textContent = 'Subscribing...';
+
+  // Simulate async (replace with real fetch to your PHP endpoint)
+  setTimeout(() => {
+    form.reset();
+    // Reset chip styles after form reset
+    form.querySelectorAll('.footer__nl-chip span').forEach(s => {
+      s.style.background = '';
+      s.style.borderColor = '';
+      s.style.color = '';
+    });
+    success.classList.add('visible');
+    btn.style.display = 'none';
+  }, 900);
+}
+</script>
+
+<!-- ── Toast container ── -->
+<div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+/* ── Demo build: no live backend ──────────────────────────────────────────
+   cart.html / wish.html are static files with nothing to POST to, so we
+   simulate a successful response here instead of letting the real request
+   fail and surface an error toast to the viewer. */
+(function() {
+  const _origFetch = window.fetch.bind(window);
+  window.fetch = function(url, opts) {
+    if (typeof url === 'string' && (url === 'wish.html' || url === 'cart.html') && opts && opts.method === 'POST') {
+      let body;
+      if (url === 'wish.html') {
+        const m = /action=([^&]+)/.exec(opts.body || '');
+        const action = m ? m[1] : 'add';
+        body = JSON.stringify({ status: action === 'remove' ? 'removed' : 'added' });
+      } else {
+        body = JSON.stringify({ status: 'ok' });
+      }
+      return Promise.resolve(new Response(body, { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+    return _origFetch(url, opts);
+  };
+})();
+/* ── Quick view ── */
+function quickView(id) {
+  window.location.href = 'detail.html' + id;
+}
+
+/* ── Live search debounce ── */
+(function() {
+  const input = document.querySelector('.search-input');
+  if (!input) return;
+  let timer;
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => input.closest('form').submit(), 400);
+  });
+})();
+
+/* ══════════════════════════════════════════════
+   TOAST SYSTEM
+══════════════════════════════════════════════ */
+function showToast({ title = 'Success', message = '', duration = 3500 } = {}) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `
+    <div class="toast__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <div class="toast__body">
+      <div class="toast__title">${title}</div>
+      <div class="toast__msg">${message}</div>
+    </div>
+    <button class="toast__close" onclick="dismissToast(this.closest('.toast'))" aria-label="Dismiss">✕</button>
+  `;
+  container.appendChild(toast);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => toast.classList.add('toast--show'));
+  });
+  const timer = setTimeout(() => dismissToast(toast), duration);
+  toast._dismissTimer = timer;
+}
+
+function dismissToast(toast) {
+  if (!toast) return;
+  clearTimeout(toast._dismissTimer);
+  toast.classList.remove('toast--show');
+  toast.classList.add('toast--hide');
+  toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+}
+
+/* ══════════════════════════════════════════════
+   WISHLIST TOGGLE — AJAX (saves to wish.php)
+══════════════════════════════════════════════ */
+const USER_LOGGED_IN = true;
+
+async function toggleWish(btn) {
+  const pid  = btn.dataset.productId;
+  const name = btn.dataset.productName;
+
+  // Auth guard
+  if (!USER_LOGGED_IN) {
+    showToast({
+      title:   '🔒 Sign in required',
+      message: 'Please <a href="login.php" style="color:var(--gold-bright);text-decoration:underline;font-weight:600;">sign in</a> to save items to your wishlist.',
+      duration: 5000,
+    });
+    return;
+  }
+
+  const isActive = btn.classList.contains('active');
+  const action   = isActive ? 'remove' : 'add';
+
+  // Optimistic UI — update ALL buttons for this product (floating + bottom)
+  const allBtns = document.querySelectorAll(
+    `.prod-card__wish-img[data-product-id="${pid}"],
+     .prod-card__wish[data-product-id="${pid}"]`
+  );
+  const nowActive = !isActive;
+  allBtns.forEach(b => {
+    b.classList.toggle('active', nowActive);
+    const svg = b.querySelector('svg');
+    svg.setAttribute('fill', nowActive ? 'currentColor' : 'none');
+    b.setAttribute('aria-label', nowActive ? 'Remove from wishlist' : 'Add to wishlist');
+  });
+
+  try {
+    const res = await fetch('wish.html', {
+      method:      'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type':     'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: `action=${action}&product_id=${pid}`,
+    });
+
+    const data = await res.json();
+
+    if (data.status === 'added' || data.status === 'removed') {
+      showToast({
+        title:   data.status === 'added' ? '♥ Saved to Wishlist' : 'Removed',
+        message: data.status === 'added'
+          ? `<strong>${name}</strong> added. <a href="wish.html" style="color:var(--gold-bright);text-decoration:underline;">View wishlist →</a>`
+          : `<strong>${name}</strong> removed from your wishlist.`,
+      });
+    } else {
+      throw new Error('Unexpected response');
+    }
+  } catch (e) {
+    // Revert optimistic update on failure
+    allBtns.forEach(b => {
+      b.classList.toggle('active', isActive);
+      const svg = b.querySelector('svg');
+      svg.setAttribute('fill', isActive ? 'currentColor' : 'none');
+      b.setAttribute('aria-label', isActive ? 'Remove from wishlist' : 'Add to wishlist');
+    });
+    showToast({ title: 'Error', message: 'Could not update wishlist. Please try again.' });
+  }
+}
+
+/* ══════════════════════════════════════════════
+   ADD TO CART — AJAX
+══════════════════════════════════════════════ */
+async function addToCart(btn) {
+  const productId   = btn.dataset.productId;
+  const productName = btn.dataset.productName;
+
+  if (!USER_LOGGED_IN) {
+    showToast({
+      title:   '🔒 Sign in required',
+      message: 'Please <a href="login.php" style="color:var(--gold-bright);text-decoration:underline;font-weight:600;">sign in</a> or <a href="signup.php" style="color:var(--gold-bright);text-decoration:underline;font-weight:600;">create an account</a> to add items to your cart.',
+      duration: 5000,
+    });
+    return;
+  }
+
+  btn.classList.add('loading');
+  const originalText = btn.textContent;
+  btn.textContent = 'Adding…';
+
+  try {
+    const body = new URLSearchParams({
+      action:     'add',
+      product_id: productId,
+      size:       'M',
+      qty:        '1',
+    });
+
+    const res = await fetch('cart.html', {
+      method:      'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type':     'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: body.toString(),
+    });
+
+    if (res.ok) {
+      showToast({
+        title:   '✦ Added to Cart',
+        message: `<strong>${productName}</strong> has been added to your cart.`,
+      });
+    } else {
+      throw new Error('Server returned ' + res.status);
+    }
+  } catch (err) {
+    showToast({
+      title:   'Something went wrong',
+      message: 'Could not add item to cart. Please try again.',
+    });
+  } finally {
+    btn.classList.remove('loading');
+    btn.textContent = originalText;
+  }
+}
+</script>
+
+</body>
+</html>

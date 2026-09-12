@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — STRITHI COLLECTION</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --purple-deepest : #1a0a2e;
+  --purple-deep    : #2d1b54;
+  --purple-mid     : #4b2a8a;
+  --purple-pale    : #c9b8f0;
+  --gold-bright    : #f5c842;
+  --gold-warm      : #d4a017;
+  --gold-muted     : #8a6a10;
+  --gold-pale      : #fdf3c8;
+  --white          : #ffffff;
+  --text-muted     : #6b5a8a;
+  --green          : #7fe0a0;
+  --green-bg       : rgba(40,180,80,.12);
+  --green-border   : rgba(40,180,80,.28);
+  --red            : #ff9f8d;
+  --red-bg         : rgba(220,60,40,.12);
+  --red-border     : rgba(220,60,40,.28);
+
+  --font-display : 'Cormorant Garamond', serif;
+  --font-body    : 'DM Sans', sans-serif;
+  --radius-sm    : 4px;
+  --radius-md    : 12px;
+  --radius-lg    : 24px;
+  --radius-full  : 999px;
+  --shadow-card  : 0 8px 40px rgba(26,10,46,.4);
+  --shadow-gold  : 0 0 40px rgba(212,160,23,.25), 0 0 80px rgba(212,160,23,.10);
+  --t            : 220ms cubic-bezier(.16,1,.3,1);
+}
+
+/* ═══════════════════════════════════════════
+   RESET / BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-body);
+  background: var(--purple-deepest);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }
+input, button { font: inherit; color: inherit; }
+
+/* grain */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 150px 150px;
+}
+
+/* orbs */
+.orb { position: fixed; border-radius: 50%; filter: blur(100px); pointer-events: none; z-index: 0; }
+.orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(75,42,138,.32) 0%, transparent 70%); top: -100px; right: -100px; animation: floatOrb 11s ease-in-out infinite; }
+.orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(212,160,23,.13) 0%, transparent 70%); bottom: 150px; left: -80px; animation: floatOrb 14s ease-in-out infinite reverse; }
+@keyframes floatOrb { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-28px);} }
+
+/* ═══════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════ */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(1.5rem, 5vw, 4rem); height: 72px;
+  background: rgba(26,10,46,.78); backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(212,160,23,.15);
+}
+.navbar__logo {
+  font-family: var(--font-display); font-size: 1.55rem; font-weight: 700;
+  letter-spacing: .04em; color: var(--gold-bright);
+  display: flex; align-items: center; gap: .5rem;
+}
+.navbar__logo span {
+  display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--gold-bright); box-shadow: 0 0 10px var(--gold-warm);
+  animation: pulseDot 2.4s ease-in-out infinite;
+}
+@keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.4;transform:scale(.7);} }
+
+.navbar__steps {
+  display: flex; align-items: center; gap: 0;
+  font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+}
+.step { display: flex; align-items: center; gap: .5rem; color: rgba(201,184,240,.35); }
+.step__num {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 1.5px solid rgba(201,184,240,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .68rem; font-weight: 600;
+}
+.step.done  { color: var(--green); }
+.step.done .step__num  { border-color: var(--green); background: rgba(127,224,160,.12); }
+.step.active { color: var(--gold-bright); }
+.step.active .step__num { border-color: var(--gold-bright); background: rgba(245,200,66,.12); color: var(--gold-bright); }
+.step__sep { width: 32px; height: 1px; background: rgba(201,184,240,.15); margin: 0 .4rem; }
+
+.navbar__actions { display: flex; align-items: center; gap: .8rem; }
+.user-chip {
+  display: flex; align-items: center; gap: .55rem;
+  background: rgba(212,160,23,.1); border: 1px solid rgba(212,160,23,.22);
+  border-radius: var(--radius-full); padding: .28rem .8rem .28rem .3rem;
+  font-size: .8rem; color: var(--gold-pale);
+}
+.user-chip__avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple-mid), var(--gold-warm));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: .88rem; font-weight: 700;
+  color: var(--white); flex-shrink: 0;
+}
+.btn-nav {
+  font-family: var(--font-body); font-size: .75rem; font-weight: 500;
+  letter-spacing: .07em; text-transform: uppercase;
+  background: transparent; color: rgba(201,184,240,.5);
+  border: 1px solid rgba(201,184,240,.18); border-radius: var(--radius-full);
+  padding: .4rem 1rem; cursor: pointer; transition: all var(--t);
+  text-decoration: none; display: inline-flex; align-items: center; gap: .4rem;
+}
+.btn-nav:hover { color: var(--white); border-color: rgba(201,184,240,.4); }
+.btn-nav svg { width: 13px; height: 13px; }
+
+/* ═══════════════════════════════════════════
+   PAGE
+═══════════════════════════════════════════ */
+.page-wrap {
+  position: relative; z-index: 2;
+  padding: 90px clamp(1rem, 4vw, 3rem) 5rem;
+  max-width: 1200px; margin: 0 auto;
+}
+
+/* breadcrumb */
+.breadcrumb {
+  display: flex; align-items: center; gap: .45rem;
+  font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
+  color: rgba(201,184,240,.35); margin-bottom: 2rem;
+}
+.breadcrumb a { color: rgba(201,184,240,.35); transition: color var(--t); }
+.breadcrumb a:hover { color: var(--gold-bright); }
+.breadcrumb__sep { opacity: .3; }
+.breadcrumb__cur { color: var(--gold-warm); }
+
+/* page title */
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 300;
+  color: var(--white); margin-bottom: 2.5rem; line-height: 1.1;
+}
+.page-title em { font-style: italic; color: var(--gold-bright); font-weight: 400; }
+
+/* ── 2-column layout ── */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ═══════════════════════════════════════════
+   LEFT COLUMN
+═══════════════════════════════════════════ */
+.section-card {
+  background: rgba(26,10,46,.55);
+  border: 1px solid rgba(212,160,23,.14);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 1.5rem;
+  animation: cardIn .5s var(--t) both;
+}
+.section-card:nth-child(2) { animation-delay: .08s; }
+.section-card:nth-child(3) { animation-delay: .16s; }
+@keyframes cardIn { from{opacity:0;transform:translateY(18px);} to{opacity:1;transform:translateY(0);} }
+
+.section-head {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1.4rem 1.8rem;
+  border-bottom: 1px solid rgba(212,160,23,.1);
+  background: rgba(45,27,84,.25);
+}
+.section-head__num {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(212,160,23,.14); border: 1.5px solid rgba(212,160,23,.35);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+  color: var(--gold-bright);
+}
+.section-head__title {
+  font-family: var(--font-display); font-size: 1.2rem; font-weight: 600;
+  color: var(--gold-pale); letter-spacing: .02em;
+}
+.section-head__sub { font-size: .75rem; color: rgba(201,184,240,.45); margin-top: .12rem; }
+
+/* ── Address card ── */
+.address-block { padding: 1.6rem 1.8rem; }
+
+.address-no-address {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 1.1rem;
+  padding: 2.5rem 1.5rem;
+}
+.address-no-address__icon {
+  width: 58px; height: 58px; border-radius: 50%;
+  background: rgba(212,160,23,.08); border: 1px solid rgba(212,160,23,.22);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(212,160,23,.55);
+}
+.address-no-address__icon svg { width: 26px; height: 26px; }
+.address-no-address__title {
+  font-family: var(--font-display); font-size: 1.2rem; font-weight: 600;
+  color: rgba(240,230,200,.65);
+}
+.address-no-address__sub { font-size: .82rem; color: rgba(201,184,240,.45); max-width: 300px; }
+.btn-add-address {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-body); font-size: .82rem; font-weight: 600;
+  letter-spacing: .09em; text-transform: uppercase;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold-warm));
+  color: var(--purple-deepest); border: none; border-radius: var(--radius-full);
+  padding: .7rem 1.8rem; cursor: pointer; transition: transform var(--t), box-shadow var(--t);
+  box-shadow: 0 4px 20px rgba(212,160,23,.3); text-decoration: none;
+}
+.btn-add-address:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(212,160,23,.5); }
+.btn-add-address svg { width: 14px; height: 14px; }
+
+.address-display {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 1rem; align-items: start;
+}
+.address-display__label {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-size: .65rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--gold-warm); margin-bottom: .8rem;
+  background: rgba(212,160,23,.1); border: 1px solid rgba(212,160,23,.22);
+  border-radius: var(--radius-full); padding: .2rem .7rem;
+}
+.address-display__label svg { width: 11px; height: 11px; }
+.address-display__name {
+  font-family: var(--font-display); font-size: 1.05rem; font-weight: 600;
+  color: var(--gold-pale); margin-bottom: .35rem;
+}
+.address-display__line { font-size: .84rem; color: rgba(201,184,240,.6); line-height: 1.7; }
+.address-display__phone {
+  display: flex; align-items: center; gap: .4rem;
+  font-size: .8rem; color: rgba(212,160,23,.75); margin-top: .6rem;
+}
+.address-display__phone svg { width: 12px; height: 12px; }
+.btn-edit-addr {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-family: var(--font-body); font-size: .72rem; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase;
+  background: rgba(212,160,23,.1); border: 1px solid rgba(212,160,23,.25);
+  color: var(--gold-warm); border-radius: var(--radius-full);
+  padding: .4rem 1rem; cursor: pointer; transition: all var(--t);
+  text-decoration: none; white-space: nowrap; flex-shrink: 0; margin-top: 2.2rem;
+}
+.btn-edit-addr:hover { background: rgba(212,160,23,.2); border-color: var(--gold-bright); color: var(--gold-bright); }
+.btn-edit-addr svg { width: 11px; height: 11px; }
+
+/* ── Payment method ── */
+.payment-block { padding: 1.6rem 1.8rem; }
+
+.payment-methods { display: flex; flex-direction: column; gap: .75rem; }
+
+.payment-method {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1.1rem 1.3rem;
+  border: 1.5px solid rgba(212,160,23,.2);
+  border-radius: var(--radius-md);
+  cursor: pointer; transition: border-color var(--t), background var(--t);
+  position: relative;
+}
+.payment-method.active {
+  border-color: var(--gold-warm);
+  background: rgba(212,160,23,.07);
+}
+.payment-method input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+
+.payment-method__radio {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid rgba(201,184,240,.25);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: border-color var(--t);
+}
+.payment-method.active .payment-method__radio {
+  border-color: var(--gold-warm);
+}
+.payment-method__radio::after {
+  content: '';
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--gold-warm);
+  opacity: 0; transform: scale(0);
+  transition: opacity var(--t), transform var(--t);
+}
+.payment-method.active .payment-method__radio::after {
+  opacity: 1; transform: scale(1);
+}
+
+.payment-method__icon {
+  width: 42px; height: 42px; border-radius: var(--radius-md); flex-shrink: 0;
+  background: rgba(45,27,84,.6); border: 1px solid rgba(212,160,23,.2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold-warm);
+}
+.payment-method__icon svg { width: 20px; height: 20px; }
+
+.payment-method__info { flex: 1; }
+.payment-method__name {
+  font-family: var(--font-display); font-size: 1rem; font-weight: 600;
+  color: var(--gold-pale); margin-bottom: .18rem;
+}
+.payment-method__desc { font-size: .75rem; color: rgba(201,184,240,.5); }
+
+.payment-method__badge {
+  font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  background: rgba(127,224,160,.14); border: 1px solid rgba(127,224,160,.28);
+  color: var(--green); border-radius: var(--radius-full); padding: .18rem .65rem;
+  flex-shrink: 0;
+}
+
+/* COD info box */
+.cod-info {
+  margin-top: 1rem;
+  background: rgba(212,160,23,.06); border: 1px solid rgba(212,160,23,.18);
+  border-radius: var(--radius-md); padding: 1rem 1.2rem;
+  display: flex; align-items: flex-start; gap: .75rem;
+}
+.cod-info svg { width: 18px; height: 18px; color: var(--gold-warm); flex-shrink: 0; margin-top: .05rem; }
+.cod-info__text { font-size: .8rem; color: rgba(201,184,240,.65); line-height: 1.65; }
+.cod-info__text strong { color: var(--gold-pale); display: block; margin-bottom: .18rem; font-size: .85rem; }
+
+/* ── Order items ── */
+.items-block { padding: 0; }
+.order-item {
+  display: grid; grid-template-columns: 68px 1fr auto;
+  gap: 1rem; align-items: center;
+  padding: 1rem 1.8rem;
+  border-bottom: 1px solid rgba(212,160,23,.07);
+  transition: background var(--t);
+}
+.order-item:last-child { border-bottom: none; }
+.order-item:hover { background: rgba(45,27,84,.25); }
+.order-item__img {
+  width: 68px; height: 88px; border-radius: var(--radius-sm);
+  overflow: hidden; border: 1px solid rgba(212,160,23,.15);
+  background: linear-gradient(160deg, rgba(75,42,138,.5), rgba(26,10,46,.9));
+  flex-shrink: 0;
+}
+.order-item__img img { width: 100%; height: 100%; object-fit: cover; }
+.order-item__name {
+  font-family: var(--font-display); font-size: .95rem; font-weight: 600;
+  color: var(--gold-pale); margin-bottom: .25rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.order-item__meta { display: flex; gap: .4rem; flex-wrap: wrap; }
+.order-item__tag {
+  font-size: .62rem; font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
+  background: rgba(212,160,23,.1); border: 1px solid rgba(212,160,23,.22);
+  color: var(--gold-muted); border-radius: var(--radius-sm); padding: .12rem .5rem;
+}
+.order-item__price { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--gold-bright); text-align: right; }
+.order-item__unit  { font-size: .7rem; color: rgba(201,184,240,.4); text-align: right; margin-top: .15rem; }
+
+/* ═══════════════════════════════════════════
+   RIGHT COLUMN — SUMMARY
+═══════════════════════════════════════════ */
+.summary-panel {
+  position: sticky; top: 88px;
+  background: rgba(45,27,84,.4);
+  border: 1px solid rgba(212,160,23,.18);
+  border-radius: var(--radius-lg);
+  overflow: hidden; box-shadow: var(--shadow-card);
+  animation: cardIn .5s var(--t) both .12s;
+}
+
+.summary-head {
+  padding: 1.4rem 1.8rem;
+  border-bottom: 1px solid rgba(212,160,23,.1);
+  background: rgba(26,10,46,.35);
+}
+.summary-head__title {
+  font-family: var(--font-display); font-size: 1.3rem; font-weight: 600;
+  color: var(--gold-pale);
+}
+.summary-head__sub { font-size: .74rem; color: rgba(201,184,240,.4); margin-top: .18rem; }
+
+.summary-body { padding: 1.4rem 1.8rem; display: flex; flex-direction: column; gap: .85rem; }
+
+.sum-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: .875rem; color: rgba(201,184,240,.65);
+}
+.sum-row__label { display: flex; align-items: center; gap: .4rem; }
+.sum-row__label svg { width: 13px; height: 13px; color: var(--gold-muted); }
+.sum-row__val { font-weight: 500; color: var(--white); }
+.sum-row__val--green { color: var(--green); font-weight: 600; }
+.sum-row__val--free  { color: var(--green); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+
+.sum-divider { height: 1px; background: rgba(212,160,23,.12); }
+
+.sum-total-row { display: flex; justify-content: space-between; align-items: baseline; }
+.sum-total-label { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; color: var(--purple-pale); }
+.sum-total-val   { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--gold-bright); }
+
+.sum-savings {
+  background: var(--green-bg); border: 1px solid var(--green-border);
+  border-radius: var(--radius-md); padding: .7rem 1rem;
+  display: flex; align-items: center; gap: .6rem;
+  font-size: .78rem; color: var(--green);
+}
+.sum-savings svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── Place order button ── */
+.summary-footer { padding: 0 1.8rem 1.8rem; display: flex; flex-direction: column; gap: .75rem; }
+
+.btn-place {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: .7rem;
+  font-family: var(--font-body); font-size: .95rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold-warm));
+  color: var(--purple-deepest); border: none; border-radius: var(--radius-full);
+  padding: 1.1rem; cursor: pointer;
+  box-shadow: 0 4px 24px rgba(212,160,23,.35);
+  transition: transform var(--t), box-shadow var(--t);
+}
+.btn-place:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 36px rgba(212,160,23,.55); }
+.btn-place:active { transform: translateY(0); }
+.btn-place:disabled { opacity: .45; cursor: not-allowed; }
+.btn-place svg { width: 18px; height: 18px; }
+
+.btn-back {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: .5rem;
+  font-family: var(--font-body); font-size: .8rem; font-weight: 400;
+  letter-spacing: .07em; text-transform: uppercase;
+  background: transparent; color: rgba(201,184,240,.5);
+  border: 1px solid rgba(201,184,240,.15); border-radius: var(--radius-full);
+  padding: .7rem; cursor: pointer; text-decoration: none;
+  transition: all var(--t);
+}
+.btn-back:hover { color: var(--white); border-color: rgba(201,184,240,.35); }
+.btn-back svg { width: 13px; height: 13px; }
+
+.trust-row {
+  display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap;
+  padding: 1rem 1.8rem 1.5rem;
+  border-top: 1px solid rgba(212,160,23,.08);
+}
+.trust-item {
+  display: flex; flex-direction: column; align-items: center; gap: .3rem;
+  font-size: .6rem; letter-spacing: .07em; text-transform: uppercase;
+  color: rgba(201,184,240,.28);
+}
+.trust-item svg { width: 16px; height: 16px; color: rgba(212,160,23,.32); }
+
+/* ═══════════════════════════════════════════
+   ALERTS
+═══════════════════════════════════════════ */
+.alert {
+  display: flex; align-items: flex-start; gap: .8rem;
+  padding: 1rem 1.3rem; border-radius: var(--radius-md);
+  font-size: .875rem; margin-bottom: 1.5rem; line-height: 1.55;
+  animation: cardIn .4s var(--t) both;
+}
+.alert svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: .05rem; }
+.alert-error   { background: var(--red-bg);   border: 1px solid var(--red-border);   color: var(--red); }
+.alert-success { background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+.alert a { color: inherit; font-weight: 600; text-decoration: underline; }
+
+/* ═══════════════════════════════════════════
+   SUCCESS SCREEN
+═══════════════════════════════════════════ */
+.success-screen {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 4rem 2rem; gap: 1.5rem;
+  background: rgba(26,10,46,.55); border: 1px solid rgba(212,160,23,.18);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-card);
+  animation: cardIn .6s var(--t) both;
+}
+.success-screen__ring {
+  width: 100px; height: 100px; border-radius: 50%;
+  background: var(--green-bg); border: 2px solid var(--green-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--green); animation: successPop .6s cubic-bezier(.16,1,.3,1) both .2s;
+}
+@keyframes successPop { from{transform:scale(0) rotate(-30deg);opacity:0;} to{transform:scale(1) rotate(0);opacity:1;} }
+.success-screen__ring svg { width: 44px; height: 44px; }
+
+.success-screen__title {
+  font-family: var(--font-display); font-size: 2.2rem; font-weight: 300;
+  color: var(--white); line-height: 1.15;
+}
+.success-screen__title strong { font-weight: 700; color: var(--gold-bright); }
+
+.success-screen__sub { font-size: .9rem; color: rgba(201,184,240,.65); max-width: 420px; line-height: 1.7; }
+
+.order-chip {
+  display: inline-flex; align-items: center; gap: .6rem;
+  background: rgba(212,160,23,.1); border: 1px solid rgba(212,160,23,.28);
+  border-radius: var(--radius-full); padding: .55rem 1.4rem;
+  font-size: .82rem; color: var(--gold-pale);
+}
+.order-chip__label { font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-muted); }
+.order-chip__value { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--gold-bright); }
+
+.cod-confirm-box {
+  background: rgba(212,160,23,.07); border: 1px solid rgba(212,160,23,.2);
+  border-radius: var(--radius-md); padding: 1.2rem 1.6rem;
+  display: flex; gap: 1rem; align-items: flex-start; text-align: left;
+  max-width: 440px;
+}
+.cod-confirm-box svg { width: 22px; height: 22px; color: var(--gold-warm); flex-shrink: 0; margin-top: .1rem; }
+.cod-confirm-box__text { font-size: .82rem; color: rgba(201,184,240,.65); line-height: 1.7; }
+.cod-confirm-box__text strong { color: var(--gold-pale); display: block; margin-bottom: .3rem; }
+
+.success-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+.btn-go {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-body); font-size: .82rem; font-weight: 600;
+  letter-spacing: .09em; text-transform: uppercase;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold-warm));
+  color: var(--purple-deepest); border: none; border-radius: var(--radius-full);
+  padding: .75rem 1.8rem; cursor: pointer; transition: transform var(--t), box-shadow var(--t);
+  box-shadow: 0 4px 20px rgba(212,160,23,.3); text-decoration: none;
+}
+.btn-go:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(212,160,23,.5); }
+.btn-go-ghost {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-body); font-size: .82rem; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase;
+  background: transparent; color: rgba(201,184,240,.6);
+  border: 1px solid rgba(201,184,240,.2); border-radius: var(--radius-full);
+  padding: .75rem 1.6rem; cursor: pointer; text-decoration: none;
+  transition: all var(--t);
+}
+.btn-go-ghost:hover { color: var(--white); border-color: rgba(201,184,240,.45); }
+
+/* ═══════════════════════════════════════════
+   EMPTY CART
+═══════════════════════════════════════════ */
+.empty-cart {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 1.3rem; padding: 5rem 2rem;
+  background: rgba(26,10,46,.5); border: 1px solid rgba(212,160,23,.13);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-card);
+  grid-column: 1/-1;
+}
+.empty-cart__icon { width: 80px; height: 80px; border-radius: 50%; background: rgba(45,27,84,.5); border: 1.5px solid rgba(212,160,23,.15); display: flex; align-items: center; justify-content: center; color: rgba(212,160,23,.3); }
+.empty-cart__icon svg { width: 34px; height: 34px; }
+.empty-cart__title { font-family: var(--font-display); font-size: 1.7rem; font-weight: 300; color: var(--purple-pale); }
+.empty-cart__sub { font-size: .88rem; color: var(--text-muted); }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .checkout-grid { grid-template-columns: 1fr; }
+  .summary-panel { position: static; }
+  .navbar__steps { display: none; }
+}
+@media (max-width: 600px) {
+  .order-item { grid-template-columns: 56px 1fr auto; gap: .75rem; }
+  .section-head, .address-block, .payment-block, .summary-body, .summary-footer { padding-left: 1.1rem; padding-right: 1.1rem; }
+  .order-item { padding-left: 1.1rem; padding-right: 1.1rem; }
+  .address-display { grid-template-columns: 1fr; }
+  .btn-edit-addr { margin-top: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ══════════════════════════════
+     NAVBAR
+══════════════════════════════ -->
+<nav class="navbar">
+  <a href="index.html" class="navbar__logo">STRITHI COLLECTION <span></span></a>
+
+  <div class="navbar__steps">
+    <div class="step done">
+      <div class="step__num">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span>Cart</span>
+    </div>
+    <div class="step__sep"></div>
+    <div class="step active">
+      <div class="step__num">2</div>
+      <span>Checkout</span>
+    </div>
+    <div class="step__sep"></div>
+    <div class="step">
+      <div class="step__num">3</div>
+      <span>Confirm</span>
+    </div>
+  </div>
+
+  <div class="navbar__actions">
+    <a href="cart.html" style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;color:inherit;text-decoration:none;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+    <circle cx="9" cy="21" r="1.4"/>
+    <circle cx="18" cy="21" r="1.4"/>
+    <path d="M2.5 3h2.2l2.1 11.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L21 7H6"/>
+  </svg>
+      <span style="position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 3px;border-radius:999px;background:#d4a017;color:#1a0a2e;font-family:'DM Sans',sans-serif;font-size:.62rem;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1;">
+      3    </span>
+  </a>
+    <div class="user-chip">
+      <div class="user-chip__avatar">AS</div>
+      Ananya    </div>
+    <a href="cart.html" class="btn-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Cart
+    </a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════
+     PAGE CONTENT
+══════════════════════════════ -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="index.html">Home</a>
+    <span class="breadcrumb__sep">›</span>
+    <a href="cart.html">Cart</a>
+    <span class="breadcrumb__sep">›</span>
+    <span class="breadcrumb__cur">Checkout</span>
+  </nav>
+
+    <!-- ══ CHECKOUT FORM ══ -->
+
+  <h1 class="page-title">Secure <em>Checkout</em></h1>
+
+  <!-- Global alerts -->
+  
+  <form method="POST" action="" id="checkoutForm">
+  <div class="checkout-grid">
+
+    <!-- ═════ LEFT COLUMN ═════ -->
+    <div>
+
+      <!-- ── SECTION 1: Delivery Address ── -->
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-head__num">1</div>
+          <div>
+            <div class="section-head__title">Delivery Address</div>
+            <div class="section-head__sub">Where should we deliver your order?</div>
+          </div>
+        </div>
+
+        <div class="address-block">
+                      <div class="address-display">
+              <div>
+                <div class="address-display__label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                  Home
+                </div>
+                <div class="address-display__name">Ananya Sharma</div>
+                <div class="address-display__line">
+                  14 Rajpur Road<br>
+                  Dehradun, Uttarakhand — 248001                </div>
+                <div class="address-display__phone">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.8a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  +91 9876543210                </div>
+              </div>
+              <a href="edit.html" class="btn-edit-addr">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Change
+              </a>
+            </div>
+                  </div>
+      </div>
+
+      <!-- ── SECTION 2: Payment Method ── -->
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-head__num">2</div>
+          <div>
+            <div class="section-head__title">Payment Method</div>
+            <div class="section-head__sub">Select how you'd like to pay</div>
+          </div>
+        </div>
+
+        <div class="payment-block">
+          <div class="payment-methods">
+
+            <!-- COD — only method -->
+            <label class="payment-method active" for="method_cod">
+              <input type="radio" name="payment_method" id="method_cod" value="cod" checked>
+              <div class="payment-method__radio"></div>
+              <div class="payment-method__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="2" y="7" width="20" height="14" rx="2"/>
+                  <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                  <line x1="12" y1="12" x2="12" y2="16"/>
+                  <line x1="10" y1="14" x2="14" y2="14"/>
+                </svg>
+              </div>
+              <div class="payment-method__info">
+                <div class="payment-method__name">Cash on Delivery</div>
+                <div class="payment-method__desc">Pay in cash when your order arrives</div>
+              </div>
+              <span class="payment-method__badge">Available</span>
+            </label>
+
+          </div>
+
+          <!-- COD info -->
+          <div class="cod-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <div class="cod-info__text">
+              <strong>How Cash on Delivery works</strong>
+              Our delivery partner will arrive at your address within <strong>5–7 business days</strong>.
+              Please keep the exact amount of
+              <strong>&#8377;45,597</strong> ready.
+              No extra charges. No card required. Pay only when you receive your order.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 3: Your Items ── -->
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-head__num">3</div>
+          <div>
+            <div class="section-head__title">Your Items</div>
+            <div class="section-head__sub">2 items in your order</div>
+          </div>
+        </div>
+
+        <div class="items-block">
+                      <div class="order-item">
+              <div class="order-item__img">
+                <img src="https://picsum.photos/seed/scoll1/600/800"
+                     alt="Midnight Sovereign Suit"
+                     onerror="this.src='https://picsum.photos/seed/1/140/180'">
+              </div>
+              <div>
+                <div class="order-item__name">Midnight Sovereign Suit</div>
+                <div class="order-item__meta">
+                  <span class="order-item__tag">Size: M</span>
+                  <span class="order-item__tag">Qty: 1</span>
+                </div>
+              </div>
+              <div>
+                <div class="order-item__price">&#8377;18,999</div>
+                <div class="order-item__unit">&#8377;18,999 each</div>
+              </div>
+            </div>
+                      <div class="order-item">
+              <div class="order-item__img">
+                <img src="https://picsum.photos/seed/scoll4/600/800"
+                     alt="Ivory Grandeur Suit"
+                     onerror="this.src='https://picsum.photos/seed/4/140/180'">
+              </div>
+              <div>
+                <div class="order-item__name">Ivory Grandeur Suit</div>
+                <div class="order-item__meta">
+                  <span class="order-item__tag">Size: L</span>
+                  <span class="order-item__tag">Qty: 2</span>
+                </div>
+              </div>
+              <div>
+                <div class="order-item__price">&#8377;26,598</div>
+                <div class="order-item__unit">&#8377;13,299 each</div>
+              </div>
+            </div>
+                  </div>
+      </div>
+
+    </div><!-- /left column -->
+
+    <!-- ═════ RIGHT COLUMN ═════ -->
+    <aside class="summary-panel" aria-label="Order summary">
+
+      <div class="summary-head">
+        <div class="summary-head__title">Order Summary</div>
+        <div class="summary-head__sub">Review your totals before placing the order</div>
+      </div>
+
+      <div class="summary-body">
+        <div class="sum-row">
+          <span class="sum-row__label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Subtotal (2 items)
+          </span>
+          <span class="sum-row__val">&#8377;45,597</span>
+        </div>
+
+                <div class="sum-row">
+          <span class="sum-row__label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Discount
+          </span>
+          <span class="sum-row__val sum-row__val--green">−&#8377;9,400</span>
+        </div>
+        
+        <div class="sum-row">
+          <span class="sum-row__label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            Shipping
+          </span>
+                      <span class="sum-row__val sum-row__val--free">Free</span>
+                  </div>
+
+        <div class="sum-row">
+          <span class="sum-row__label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            Payment Mode
+          </span>
+          <span class="sum-row__val" style="color:var(--gold-warm);font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">COD</span>
+        </div>
+
+                <div class="sum-savings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          You're saving &#8377;9,400 on this order!
+        </div>
+        
+        <div class="sum-divider"></div>
+
+        <div class="sum-total-row">
+          <span class="sum-total-label">Total Payable</span>
+          <span class="sum-total-val">&#8377;45,597</span>
+        </div>
+        <div style="font-size:.68rem;color:rgba(201,184,240,.3);letter-spacing:.04em;">
+          Inclusive of all taxes &bull; Pay on delivery
+        </div>
+      </div>
+
+      <div class="summary-footer">
+        <button type="submit" name="place_order" class="btn-place"
+                >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Place Order — COD        </button>
+        <a href="cart.html" class="btn-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Edit Cart
+        </a>
+      </div>
+
+      <div class="trust-row">
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Secure
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Easy Return
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Authentic
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          Fast Ship
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+  </form>
+
+  
+</div><!-- /page-wrap -->
+
+
+
+<footer class="site-footer">
+
+  <!-- Decorative top border with ornament -->
+  <div class="footer__top-ornament">
+    <div class="footer__orn-line"></div>
+    <div class="footer__orn-diamond"></div>
+    <div class="footer__orn-line"></div>
+  </div>
+
+  <div class="footer__inner">
+
+    <!-- ── COLUMN 1 : About & Contact ── -->
+    <div class="footer__col">
+
+      <!-- Brand -->
+      <div class="footer__brand">
+        <span class="footer__logo">STRITHI COLLECTION</span>
+        <span class="footer__logo-dot"></span>
+      </div>
+      <p class="footer__tagline">
+        Dressed for those who demand more &mdash; elegance, refinement, and
+        timeless style delivered to your door.
+      </p>
+
+      <!-- About Us -->
+      <h3 class="footer__col-title">About Us</h3>
+      <p class="footer__body-text">
+        STRITHI COLLECTION is a premium fashion platform curating the finest suits and
+        sarees for discerning individuals. Every piece is chosen for its
+        craftsmanship, fabric quality, and enduring elegance.
+      </p>
+
+      <!-- Contact Us -->
+      <h3 class="footer__col-title" style="margin-top:1.8rem;">Contact Us</h3>
+      <ul class="footer__contact-list">
+        <li>
+          <svg class="footer__contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:support@STRITHI COLLECTION.in">support@STRITHI COLLECTION.in</a>
+        </li>
+        <li>
+          <svg class="footer__contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.74a16 16 0 0 0 6.29 6.29l1.62-1.62a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <a href="tel:+911800001234">+91 1800 001 234</a>
+        </li>
+        <li>
+          <svg class="footer__contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>14 Silk Route, Connaught Place,<br>New Delhi &mdash; 110001</span>
+        </li>
+      </ul>
+
+      <!-- Social icons -->
+      <div class="footer__socials">
+        <a href="#" class="footer__social-btn" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="#" class="footer__social-btn" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" class="footer__social-btn" aria-label="Pinterest">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.76 1.22-5.16 1.22-5.16s-.31-.62-.31-1.54c0-1.45.84-2.53 1.88-2.53.89 0 1.32.67 1.32 1.47 0 .9-.57 2.24-.87 3.48-.25 1.04.52 1.88 1.54 1.88 1.84 0 3.08-2.36 3.08-5.15 0-2.13-1.44-3.62-3.5-3.62-2.38 0-3.78 1.79-3.78 3.64 0 .72.28 1.49.62 1.91.07.08.08.15.06.24-.06.26-.2.83-.23.95-.04.15-.13.18-.3.11-1.12-.52-1.82-2.17-1.82-3.49 0-2.84 2.06-5.44 5.94-5.44 3.12 0 5.55 2.22 5.55 5.19 0 3.1-1.95 5.59-4.66 5.59-.91 0-1.77-.47-2.06-1.03l-.56 2.1c-.2.79-.75 1.77-1.12 2.37.85.26 1.74.4 2.67.4 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+        </a>
+        <a href="#" class="footer__social-btn" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75,15.02 15.5,12 9.75,8.98 9.75,15.02" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+    </div>
+
+
+    <!-- ── COLUMN 2 : Products ── -->
+    <div class="footer__col footer__col--products">
+      <h3 class="footer__col-title">Our Collections</h3>
+
+      <!-- SUIT category -->
+      <div class="footer__product-group">
+        <div class="footer__product-group-header">
+          <span class="footer__product-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 7l-8-4-8 4m16 0v10l-8 4m-8-4V7m8 4l8-4M12 11L4 7"/></svg>
+          </span>
+          <span class="footer__product-group-name">Suit</span>
+        </div>
+        <ul class="footer__product-links">
+          <li><a href="#">Midnight Sovereign</a></li>
+          <li><a href="#">Charcoal Regent</a></li>
+          <li><a href="#">Royal Velvet</a></li>
+          <li><a href="#">Ivory Grandeur</a></li>
+          <li><a href="#">Obsidian Elite</a></li>
+          <li><a href="#suits" class="footer__view-all">View all suits &rarr;</a></li>
+        </ul>
+      </div>
+
+      <!-- Divider -->
+      <div class="footer__product-divider"></div>
+
+      <!-- SAREE category -->
+      <div class="footer__product-group">
+        <div class="footer__product-group-header">
+          <span class="footer__product-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          </span>
+          <span class="footer__product-group-name">Saree</span>
+        </div>
+        <ul class="footer__product-links">
+          <li><a href="#">Banarasi Silk</a></li>
+          <li><a href="#">Kanjivaram Gold</a></li>
+          <li><a href="#">Chanderi Elegance</a></li>
+          <li><a href="#">Mysore Silk Royal</a></li>
+          <li><a href="#">Organza Luxe</a></li>
+          <li><a href="#sarees" class="footer__view-all">View all sarees &rarr;</a></li>
+        </ul>
+      </div>
+
+      <!-- Quick links -->
+      <div class="footer__product-divider"></div>
+      <ul class="footer__quick-links">
+        <li><a href="#">New Arrivals</a></li>
+        <li><a href="#">Best Sellers</a></li>
+        <li><a href="#">Sale</a></li>
+        <li><a href="#">Gift Cards</a></li>
+      </ul>
+    </div>
+
+
+    <!-- ── COLUMN 3 : Newsletter ── -->
+    <div class="footer__col footer__col--newsletter">
+      <h3 class="footer__col-title">Stay in the Know</h3>
+      <p class="footer__body-text">
+        Subscribe to our newsletter for exclusive drops, style guides,
+        and member-only offers delivered straight to your inbox.
+      </p>
+
+      <form class="footer__newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+        <div class="footer__nl-field">
+          <label for="nl-name" class="footer__nl-label">Full Name</label>
+          <input type="text" id="nl-name" name="nl_name"
+                 class="footer__nl-input" placeholder="Arjun Mehta" autocomplete="name" />
+        </div>
+        <div class="footer__nl-field">
+          <label for="nl-email" class="footer__nl-label">Email Address</label>
+          <input type="email" id="nl-email" name="nl_email"
+                 class="footer__nl-input" placeholder="you@example.com" autocomplete="email" required />
+        </div>
+
+        <div class="footer__nl-pref-label">I'm interested in</div>
+        <div class="footer__nl-chips">
+          <label class="footer__nl-chip">
+            <input type="checkbox" name="pref_suit" value="suit" />
+            <span>Suits</span>
+          </label>
+          <label class="footer__nl-chip">
+            <input type="checkbox" name="pref_saree" value="saree" />
+            <span>Sarees</span>
+          </label>
+          <label class="footer__nl-chip">
+            <input type="checkbox" name="pref_offers" value="offers" />
+            <span>Offers</span>
+          </label>
+          <label class="footer__nl-chip">
+            <input type="checkbox" name="pref_new" value="new" />
+            <span>New Arrivals</span>
+          </label>
+        </div>
+
+        <button type="submit" class="footer__nl-btn">
+          <span class="footer__nl-btn-text">Subscribe</span>
+          <svg class="footer__nl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+
+        <div class="footer__nl-success" id="nlSuccess" aria-live="polite">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          You're on the list! Expect something elegant soon.
+        </div>
+      </form>
+
+      <p class="footer__nl-privacy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:13px;height:13px;flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        We respect your privacy. Unsubscribe anytime.
+      </p>
+    </div>
+
+  </div><!-- /footer__inner -->
+
+
+  <!-- Bottom bar -->
+  <div class="footer__bottom">
+    <p class="footer__copy">&copy; 2026 STRITHI COLLECTION. All rights reserved.</p>
+    <div class="footer__bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Shipping &amp; Returns</a>
+    </div>
+  </div>
+
+</footer>
+
+
+<style>
+/* ═══════════════════════════════════════════════════
+   STRITHI COLLECTION FOOTER  —  footer.php styles
+   Include once per page (or move to your main CSS)
+═══════════════════════════════════════════════════ */
+
+.site-footer {
+  background: linear-gradient(180deg, rgba(26,10,46,0) 0%, #140826 6%, #0e0519 100%);
+  border-top: 1px solid rgba(212,160,23,.15);
+  padding-top: 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Ornament ── */
+.footer__top-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem 0 0;
+}
+.footer__orn-line {
+  width: 120px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,160,23,.35));
+}
+.footer__orn-line:last-child { transform: scaleX(-1); }
+.footer__orn-diamond {
+  width: 9px; height: 9px;
+  background: var(--gold-warm, #d4a017);
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px rgba(212,160,23,.5);
+}
+
+/* ── 3-column grid ── */
+.footer__inner {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1.1fr;
+  gap: 3.5rem;
+  padding: 3.5rem clamp(1.5rem, 7vw, 6rem) 3rem;
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+/* ── Shared col styles ── */
+.footer__col-title {
+  font-family: var(--font-display, 'Cormorant Garamond', serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--gold-bright, #f5c842);
+  margin-bottom: 1rem;
+  position: relative;
+  padding-bottom: .6rem;
+}
+.footer__col-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 32px; height: 1.5px;
+  background: var(--gold-warm, #d4a017);
+  border-radius: 2px;
+}
+
+.footer__body-text {
+  font-size: .85rem;
+  line-height: 1.75;
+  color: rgba(201,184,240,.7);
+  font-weight: 300;
+  margin-bottom: 1.2rem;
+}
+
+/* ── Col 1 : Brand / Contact ── */
+.footer__brand {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+.footer__logo {
+  font-family: var(--font-display, 'Cormorant Garamond', serif);
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--gold-bright, #f5c842);
+}
+.footer__logo-dot {
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--gold-bright, #f5c842);
+  box-shadow: 0 0 10px rgba(212,160,23,.6);
+}
+.footer__tagline {
+  font-size: .78rem;
+  letter-spacing: .06em;
+  color: rgba(201,184,240,.45);
+  line-height: 1.6;
+  margin-bottom: 1.8rem;
+  font-style: italic;
+}
+
+.footer__contact-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+}
+.footer__contact-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: .65rem;
+  font-size: .83rem;
+  color: rgba(201,184,240,.75);
+  line-height: 1.55;
+}
+.footer__contact-icon {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  margin-top: .12rem;
+  color: var(--gold-warm, #d4a017);
+}
+.footer__contact-list a {
+  color: rgba(201,184,240,.75);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer__contact-list a:hover { color: var(--gold-bright, #f5c842); }
+
+.footer__socials {
+  display: flex;
+  gap: .65rem;
+  margin-top: 1.8rem;
+}
+.footer__social-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(212,160,23,.25);
+  background: rgba(45,27,84,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(201,184,240,.65);
+  transition: background .2s, border-color .2s, color .2s, transform .2s;
+}
+.footer__social-btn svg { width: 15px; height: 15px; }
+.footer__social-btn:hover {
+  background: rgba(212,160,23,.15);
+  border-color: var(--gold-warm, #d4a017);
+  color: var(--gold-bright, #f5c842);
+  transform: translateY(-2px);
+}
+
+/* ── Col 2 : Products ── */
+.footer__product-group { margin-bottom: .5rem; }
+
+.footer__product-group-header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: .9rem;
+}
+.footer__product-group-icon {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  background: rgba(212,160,23,.12);
+  border: 1px solid rgba(212,160,23,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-warm, #d4a017);
+  flex-shrink: 0;
+}
+.footer__product-group-icon svg { width: 15px; height: 15px; }
+
+.footer__product-group-name {
+  font-family: var(--font-display, 'Cormorant Garamond', serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--gold-pale, #fdf3c8);
+}
+
+.footer__product-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  padding-left: .4rem;
+}
+.footer__product-links li a {
+  font-size: .83rem;
+  color: rgba(201,184,240,.65);
+  text-decoration: none;
+  letter-spacing: .02em;
+  transition: color .2s, padding-left .2s;
+  display: inline-block;
+}
+.footer__product-links li a:hover {
+  color: var(--gold-bright, #f5c842);
+  padding-left: .4rem;
+}
+.footer__view-all {
+  font-size: .75rem !important;
+  letter-spacing: .08em !important;
+  color: var(--gold-warm, #d4a017) !important;
+  text-transform: uppercase;
+  margin-top: .2rem;
+}
+.footer__view-all:hover { color: var(--gold-bright, #f5c842) !important; }
+
+.footer__product-divider {
+  height: 1px;
+  background: rgba(212,160,23,.1);
+  margin: 1.2rem 0;
+}
+
+.footer__quick-links {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem .8rem;
+}
+.footer__quick-links a {
+  font-size: .75rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: rgba(201,184,240,.45);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer__quick-links a:hover { color: var(--gold-bright, #f5c842); }
+
+/* ── Col 3 : Newsletter ── */
+.footer__newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer__nl-field {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+.footer__nl-label {
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(212,160,23,.7);
+}
+.footer__nl-input {
+  background: rgba(45,27,84,.4);
+  border: 1px solid rgba(212,160,23,.2);
+  border-radius: 8px;
+  padding: .65rem 1rem;
+  font-size: .875rem;
+  color: #fff;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  transition: border-color .2s, background .2s;
+  outline: none;
+}
+.footer__nl-input::placeholder { color: rgba(201,184,240,.3); }
+.footer__nl-input:focus {
+  border-color: rgba(212,160,23,.55);
+  background: rgba(45,27,84,.6);
+}
+
+.footer__nl-pref-label {
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(212,160,23,.7);
+  margin-bottom: -.4rem;
+}
+.footer__nl-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+.footer__nl-chip {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.footer__nl-chip input[type="checkbox"] {
+  display: none;
+}
+.footer__nl-chip span {
+  display: inline-block;
+  font-size: .75rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(201,184,240,.6);
+  border: 1px solid rgba(201,184,240,.2);
+  border-radius: 999px;
+  padding: .3rem .85rem;
+  transition: all .2s;
+  user-select: none;
+}
+.footer__nl-chip input:checked + span {
+  background: rgba(212,160,23,.18);
+  border-color: rgba(212,160,23,.55);
+  color: var(--gold-bright, #f5c842);
+}
+.footer__nl-chip:hover span {
+  border-color: rgba(212,160,23,.4);
+  color: rgba(201,184,240,.9);
+}
+
+.footer__nl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  background: linear-gradient(135deg, #f5c842, #d4a017);
+  color: #1a0a2e;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  font-size: .875rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 999px;
+  padding: .8rem 1.8rem;
+  cursor: pointer;
+  transition: box-shadow .25s, transform .15s;
+  width: 100%;
+}
+.footer__nl-btn:hover {
+  box-shadow: 0 6px 28px rgba(212,160,23,.45);
+  transform: translateY(-2px);
+}
+.footer__nl-btn:active { transform: translateY(0); }
+.footer__nl-btn-icon { width: 17px; height: 17px; }
+
+.footer__nl-success {
+  display: none;
+  align-items: center;
+  gap: .6rem;
+  background: rgba(67,122,34,.2);
+  border: 1px solid rgba(67,122,34,.4);
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  font-size: .83rem;
+  color: #a8d88a;
+}
+.footer__nl-success svg { width: 16px; height: 16px; flex-shrink: 0; stroke: #a8d88a; }
+.footer__nl-success.visible { display: flex; }
+
+.footer__nl-privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: .4rem;
+  font-size: .72rem;
+  color: rgba(201,184,240,.35);
+  line-height: 1.5;
+}
+
+/* ── Bottom bar ── */
+.footer__bottom {
+  border-top: 1px solid rgba(212,160,23,.1);
+  padding: 1.4rem clamp(1.5rem, 7vw, 6rem);
+  max-width: 1280px;
+  margin-inline: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.footer__copy {
+  font-size: .78rem;
+  color: rgba(107,90,138,.55);
+}
+.footer__bottom-links {
+  display: flex;
+  gap: 1.8rem;
+}
+.footer__bottom-links a {
+  font-size: .75rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(107,90,138,.55);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer__bottom-links a:hover { color: var(--gold-bright, #f5c842); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .footer__inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+  .footer__col--newsletter {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer__inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2.5rem 1.5rem 2rem;
+  }
+  .footer__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .8rem;
+  }
+  .footer__bottom-links { flex-wrap: wrap; gap: 1rem; }
+}
+</style>
+
+
+<script>
+function handleNewsletterSubmit(e) {
+  e.preventDefault();
+  const form   = e.target;
+  const email  = form.nl_email.value.trim();
+  const btn    = form.querySelector('.footer__nl-btn');
+  const success = document.getElementById('nlSuccess');
+
+  if (!email) return;
+
+  // Visual loading state
+  btn.disabled = true;
+  btn.querySelector('.footer__nl-btn-text').textContent = 'Subscribing...';
+
+  // Simulate async (replace with real fetch to your PHP endpoint)
+  setTimeout(() => {
+    form.reset();
+    // Reset chip styles after form reset
+    form.querySelectorAll('.footer__nl-chip span').forEach(s => {
+      s.style.background = '';
+      s.style.borderColor = '';
+      s.style.color = '';
+    });
+    success.classList.add('visible');
+    btn.style.display = 'none';
+  }, 900);
+}
+</script>
+
+<script>
+/* Animate payment method selection (only COD for now, future-proofed) */
+document.querySelectorAll('.payment-method').forEach(method => {
+  method.addEventListener('click', function() {
+    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+    this.classList.add('active');
+    this.querySelector('input[type="radio"]').checked = true;
+  });
+});
+
+/* Show loading state AFTER form submits (setTimeout 0 lets the POST fire first) */
+document.getElementById('checkoutForm')?.addEventListener('submit', function(e) {
+  const btn = this.querySelector('.btn-place');
+  if (!btn || btn.disabled) return;
+  setTimeout(function() {
+    btn.disabled = true;
+    btn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite">
+        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
+      Placing Order…
+    `;
+  }, 0);
+});
+</script>
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</body>
+</html>

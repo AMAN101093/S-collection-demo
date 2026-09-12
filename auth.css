@@ -1,0 +1,221 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   auth.css — base layout for account pages (dashboard, order, edit)
+   Reconstructed to match the dark + gold theme already used inline in
+   dashboard.php (Cinzel / Cormorant Garamond / Jost, #c9a84c gold accent).
+   ───────────────────────────────────────────────────────────────────────── */
+
+* , *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --ink        : #0f0d0a;
+  --panel      : #17140f;
+  --panel-2    : #1e1a13;
+  --gold       : #c9a84c;
+  --gold-soft  : rgba(201,168,76,.14);
+  --text       : #f0e6c8;
+  --text-muted : rgba(240,230,200,.55);
+  --border     : rgba(201,168,76,.18);
+}
+
+body.dashboard-body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: 'Jost', sans-serif;
+  min-height: 100vh;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--gold);
+  color: var(--ink);
+  padding: .6rem 1rem;
+  z-index: 1000;
+}
+.skip-link:focus { left: 1rem; top: 1rem; }
+
+/* ── Top nav ── */
+.dash-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(1.25rem, 4vw, 3rem);
+  height: 72px;
+  background: rgba(15,13,10,.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.dash-brand {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  text-decoration: none;
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  letter-spacing: .04em;
+}
+.dash-brand em { color: var(--gold); font-style: normal; }
+
+.dash-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dash-user-chip {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  background: var(--gold-soft);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: .3rem .9rem .3rem .35rem;
+  font-size: .85rem;
+}
+
+.dash-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: .75rem;
+}
+
+.dash-user-name { color: var(--text); }
+
+.btn-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  text-decoration: none;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: .45rem 1rem;
+  font-size: .82rem;
+  transition: color .2s, border-color .2s;
+}
+.btn-logout:hover { color: var(--gold); border-color: var(--gold); }
+
+/* ── Main layout ── */
+.dash-main { padding: 3rem 1.5rem 5rem; }
+.dash-container { max-width: 920px; margin: 0 auto; }
+
+.dash-hero {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.dash-avatar-lg {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.dash-welcome {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 .3rem;
+}
+
+.dash-member { color: var(--text-muted); font-size: .88rem; margin: 0; }
+
+/* ── Sections ── */
+.dash-section { margin-bottom: 3rem; }
+
+.dash-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: .95rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 1.25rem;
+  padding-bottom: .6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Account details grid ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.info-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.1rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+
+.info-label {
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.info-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+/* ── Quick actions ── */
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.6rem 1rem;
+  text-decoration: none;
+  color: var(--text);
+  font-size: .88rem;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.action-card svg { color: var(--gold); }
+.action-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(201,168,76,.12);
+}
